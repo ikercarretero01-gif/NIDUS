@@ -1,0 +1,182 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Fondo y texto estilo Notion limpio */
+  --background: #ffffff;
+  --foreground: #09090b;
+
+  /* Superficies secundarias y tarjetas */
+  --card: #ffffff;
+  --card-foreground: #09090b;
+  --muted: #f4f4f6;
+  --muted-foreground: #6b7280;
+
+  /* Bordes ultra-sutiles */
+  --border: #e5e7eb;
+  --border-subtle: #f3f4f6;
+
+  /* Acentos y hovers */
+  --accent: #f4f4f6;
+  --accent-foreground: #111827;
+
+  /* Destructivo */
+  --destructive: #ef4444;
+
+  /* Prioridades cuidadas */
+  --priority-alta: #ef4444;
+  --priority-alta-bg: #fef2f2;
+  --priority-media: #f59e0b;
+  --priority-media-bg: #fffbeb;
+  --priority-baja: #6b7280;
+  --priority-baja-bg: #f9fafb;
+
+  /* Sidebar */
+  --sidebar-width: 260px;
+  --sidebar-width-collapsed: 64px;
+}
+
+.dark {
+  /* Modo oscuro refinado tipo Linear / Raycast */
+  --background: #0d0e12;
+  --foreground: #f4f4f5;
+
+  --card: #13141b;
+  --card-foreground: #f4f4f5;
+  --muted: #181922;
+  --muted-foreground: #9ca3af;
+
+  --border: #232533;
+  --border-subtle: #191a24;
+
+  --accent: #1e202c;
+  --accent-foreground: #f4f4f5;
+
+  --destructive: #f87171;
+
+  --priority-alta: #f87171;
+  --priority-alta-bg: rgba(239, 68, 68, 0.12);
+  --priority-media: #fbbf24;
+  --priority-media-bg: rgba(245, 158, 11, 0.12);
+  --priority-baja: #9ca3af;
+  --priority-baja-bg: rgba(107, 114, 128, 0.12);
+}
+
+/* Base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-feature-settings: "rlig" 1, "calt" 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.01em;
+}
+
+/* Scrollbar sutil estilo Notion */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--border);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--muted-foreground);
+}
+
+/* Glassmorphism & utilities */
+@layer utilities {
+  .glass-card {
+    background: var(--card);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+  }
+
+  .focus-ring {
+    @apply outline-none ring-2 ring-zinc-400/30 ring-offset-2 ring-offset-[var(--background)];
+  }
+
+  .transition-default {
+    @apply transition-all duration-200 ease-out;
+  }
+}
+
+/* Micro-animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes strikethrough {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes checkBounce {
+  0% {
+    transform: scale(0.85);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-check-bounce {
+  animation: checkBounce 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.task-completed .task-title {
+  position: relative;
+}
+
+.task-completed .task-title::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  height: 1.5px;
+  background-color: var(--muted-foreground);
+  animation: strikethrough 0.22s ease-out forwards;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+.animate-shake {
+  animation: shake 0.35s ease-in-out;
+}
+
