@@ -1,224 +1,157 @@
 # Nidus
 
 <p align="center">
-  <img src="public/logo.png" alt="Nidus Logo" width="90" height="90" />
+  <img src="public/logo.png" alt="Nidus Logo" width="80" height="80" />
 </p>
 
 <p align="center">
-  <strong>Plataforma privada de productividad personal, gestión de agendas y motor de rutinas recurrentes.</strong>
+  <strong>Agenda diaria intencional y motor de rutinas recurrentes. Diseñada para concentrarse en ejecutar, no en gestionar listas infinitas.</strong>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Next.js-15.3.3-black?style=flat-square&logo=next.js" alt="Next.js" />
-  <img src="https://img.shields.io/badge/React-19.1.0-blue?style=flat-square&logo=react" alt="React" />
-  <img src="https://img.shields.io/badge/TypeScript-5.0-3178C6?style=flat-square&logo=typescript" alt="TypeScript" />
-  <img src="https://img.shields.io/badge/TailwindCSS-3.4-38B2AC?style=flat-square&logo=tailwind-css" alt="Tailwind CSS" />
-  <img src="https://img.shields.io/badge/Zustand-5.0-orange?style=flat-square" alt="Zustand" />
-  <img src="https://img.shields.io/badge/Despliegue-Vercel-black?style=flat-square&logo=vercel" alt="Vercel" />
+  <img src="https://img.shields.io/badge/Next.js-15-000000?style=flat-square&logo=next.js" alt="Next.js" />
+  <img src="https://img.shields.io/badge/React-19-20232A?style=flat-square&logo=react" alt="React" />
+  <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Tailwind-3.4-38B2AC?style=flat-square&logo=tailwind-css" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/State-Zustand-orange?style=flat-square" alt="Zustand" />
 </p>
 
 ---
 
-## 📌 Descripción del Proyecto
+## Por qué Nidus
 
-**Nidus** es un entorno personal de gestión del tiempo y tareas diseñado para simplificar el flujo de trabajo diario sin sobrecarga cognitiva. Desarrollado con una arquitectura orientada al rendimiento, garantiza una navegación instantánea, persistencia en el dispositivo del usuario y un control de acceso privado que permite compartir o exhibir el repositorio públicamente manteniendo los datos y tareas protegidos.
+La mayoría de herramientas de productividad se convierten en vertederos de tareas atrasadas. Se pierde más tiempo configurando etiquetas, prioridades complejas y carpetas anidadas que completando trabajo real.
+
+Nidus replantea este flujo con un enfoque directo:
+
+- **Enfoque en el día a día:** La vista central es la agenda de hoy, segmentada naturalmente en bloques de mañana, tarde y noche para dar contexto temporal sin rigidez.
+- **Hábitos y compromisos sin fricción:** Rutinas periódicas (entrenamiento, lectura, revisiones) que aparecen en la agenda de forma automática según los días elegidos, sin ensuciar la bandeja de entrada cuando no tocan.
+- **Replanificación ágil:** Si una tarea no se completa, no se pierde ni genera culpa. Un clic abre el selector interactivo para posponerla al día exacto con un solo toque.
+- **Velocidad nativa:** Carga instantánea, persistencia local en el dispositivo del usuario y cero esperas entre pantallas.
 
 ---
 
-## 📸 Vista Previa de la Aplicación
+## Vista Previa
 
-<!-- 
+<!--
 ===================================================================
-[IMAGEN 1: VISTA PRINCIPAL / AGENDA DIARIA]
-Descripción de lo que se verá:
-Captura completa de la Agenda Diaria en modo oscuro mostrando los tres
-bloques del día (Mañana, Tarde, Noche), la barra de progreso, los chips
-de navegación rápida (Ayer, Hoy, Mañana) y tareas creadas con sus etiquetas.
+[CAPTURAS SUGERIDAS PARA ESTA SECCIÓN]
+Guarda tus imágenes en la carpeta 'docs/screenshots/' con estos nombres:
+- today-view.png      -> Captura de la Agenda Diaria en modo oscuro mostrando los bloques y barra de progreso.
+- routines-view.png   -> Captura de la pantalla de Rutinas con los presets (Gym L-X-V, Diario) y selectores de días.
+- postpone-modal.png  -> Captura del modal de posponer con el mini calendario mensual desplegado.
 ===================================================================
 -->
+
 <p align="center">
-  <img src="docs/screenshots/today-view.png" alt="Agenda Diaria de Nidus" width="850" />
+  <img src="docs/screenshots/today-view.png" alt="Agenda Diaria Nidus" width="850" />
   <br />
-  <em>Vista de la Agenda Diaria con organización por bloques temporales y progreso en tiempo real.</em>
+  <em>Agenda diaria estructurada por franjas horarias con progreso en tiempo real.</em>
 </p>
 
 <br />
 
 <p align="center">
-  <!-- 
-  ===================================================================
-  [IMAGEN 2: CONTROL DE ACCESO GATEKEEPER]
-  Descripción de lo que se verá:
-  Captura de la pantalla de bloqueo mostrando la insignia de "Espacio privado
-  de Iker Carretero", los botones de solicitud de acceso por correo y
-  el teclado numérico de 4 dígitos para validación directa con PIN.
-  ===================================================================
-  -->
-  <img src="docs/screenshots/gatekeeper.png" alt="Pantalla de Acceso Privado Gatekeeper" width="410" />
+  <img src="docs/screenshots/routines-view.png" alt="Gestor de Rutinas" width="415" />
   &nbsp;&nbsp;
-  <!-- 
-  ===================================================================
-  [IMAGEN 3: GESTIÓN DE RUTINAS Y DÍAS]
-  Descripción de lo que se verá:
-  Captura de la sección 'Rutinas' donde se aprecian los presets rápidos
-  (Gym L-X-V, Diario, L-V) y los selectores activos de días de la semana.
-  ===================================================================
-  -->
-  <img src="docs/screenshots/routines-view.png" alt="Motor de Rutinas y Hábitos" width="410" />
+  <img src="docs/screenshots/postpone-modal.png" alt="Modal de Posponer Tarea" width="415" />
 </p>
 
 <p align="center">
-  <em>Izquierda: Gatekeeper de acceso privado. Derecha: Gestor de rutinas recurrentes y hábitos.</em>
-</p>
-
-<br />
-
-<!-- 
-===================================================================
-[IMAGEN 4: REPLANIFICACIÓN Y MODAL DE POSPONER]
-Descripción de lo que se verá:
-Captura del modal emergente para posponer tareas con el mini calendario mensual,
-los accesos rápidos (+1 día, Mañana, Siguiente semana) y la sección de
-tareas pendientes acumuladas de días pasados.
-===================================================================
--->
-<p align="center">
-  <img src="docs/screenshots/postpone-modal.png" alt="Modal de Posponer Tareas con Calendario" width="600" />
-  <br />
-  <em>Módulo de reprogramación y resolución de tareas pendientes con mini calendario interactivo.</em>
+  <em>Izquierda: Configuración de rutinas recurrentes por días. Derecha: Replanificación rápida con mini calendario.</em>
 </p>
 
 ---
 
-## ✨ Características Principales
+## Funcionalidades Clave
 
-### 🔒 Control de Privacidad y Gatekeeper
-- **Acceso Propietario con PIN:** Validación instantánea de 4 dígitos al pulsar la última tecla, sin necesidad de botones de confirmación adicionales.
-- **Seguridad en Repositorio Público:** La clave PIN se parametriza a través de variables de entorno seguras (`NEXT_PUBLIC_OWNER_PIN`), evitando cualquier fuga en el código fuente de GitHub.
-- **Portal de Solicitud para Visitantes:** Pantalla de bienvenida elegante con llamada a la acción para solicitar acceso vía Gmail Web, cliente de correo predeterminado o copia directa de dirección al portapapeles (`ikercarretero01@gmail.com`).
+### Agenda Diaria por Bloques
+- Navegación rápida con accesos directos (*Ayer, Hoy, Mañana*) y selector de calendario.
+- Agrupación automática de tareas según horario: **Mañana** (hasta las 14:00), **Tarde** (14:00 a 20:00) y **Noche** (a partir de las 20:00).
+- Métricas visuales de cumplimiento con barra de progreso interactiva.
 
-### 📅 Agenda Diaria Inteligente
-- Navegación ágil entre días: accesos directos (*Ayer, Hoy, Mañana*), flechas de avance/retroceso y botón flotante de retorno rápido a la fecha actual.
-- Clasificación temporal automática según el horario de la tarea: **Mañana** (antes de las 14:00), **Tarde** (14:00 a 20:00) y **Noche** (a partir de las 20:00).
-- Métricas de cumplimiento y barra visual de progreso porcentual del día.
+### Bandeja de Pendientes y Posposición Inteligente
+- Detección automática de tareas pendientes que quedaron sin marcar en días anteriores.
+- Botón **Posponer** por tarea con mini calendario mensual interactivo y atajos inmediatos (*Hoy, Mañana, +2 días, Siguiente semana*).
+- Acción rápida para arrastrar todas las pendientes acumuladas a la jornada actual con un solo clic.
 
-### ⏳ Bandeja de Pendientes y Reprogramación
-- Detección proactiva de tareas no completadas de jornadas anteriores.
-- Botón **Posponer** por tarea individual con mini calendario desplegable del mes y chips de posposición inmediata (*Hoy, Mañana, +2 días, Siguiente semana*).
-- Acción masiva **"Mover todas a Hoy"** para reincorporar pendientes acumuladas con un solo clic.
+### Motor de Rutinas Recurrentes
+- Diseñado para hábitos y compromisos cíclicos (rutinas de gimnasio, estudio, revisiones periódicas).
+- Presets rápidos de un clic: *Gym (L-X-V), Todos los días, Días laborables (L-V), Fines de semana*.
+- Selectores manuales para activar cualquier combinación de días de la semana (`L · M · X · J · V · S · D`).
+- Inyección automática en la agenda del día como tareas completables con seguimiento de racha.
 
-### 🔁 Motor de Rutinas y Hábitos Recurrentes
-- Diseñado para hábitos y compromisos periódicos (p. ej., entrenamiento en gimnasio, revisiones semanales, lectura).
-- Presets rápidos de repetición: *Gym (L-X-V), Todos los días, Días laborales (L-V), Fines de semana (S-D)*.
-- Personalización fina mediante botones independientes para cada día de la semana (`[ L ] [ M ] [ X ] [ J ] [ V ] [ S ] [ D ]`).
-- Las rutinas se materializan automáticamente en la agenda del día correspondiente como tareas virtuales interactuables.
+### Vistas Semanal y Mensual
+- **Planificador Semanal:** Matriz de 7 días para distribuir la carga de trabajo de un vistazo.
+- **Calendario Mensual:** Vista global con indicadores de volumen diario y panel lateral de detalle.
 
-### 🗓️ Perspectiva Semanal y Mensual
-- **Vista Semanal:** Matriz interactiva de 7 columnas para planificar cargas de trabajo a medio plazo.
-- **Vista Mensual:** Cuadrícula completa con marcadores de densidad de tareas y panel lateral de detalle diario.
-
-### 🎨 Experiencia de Usuario y Diseño
-- Estética minimalista y moderna con base en paletas de escala de grises zinc y acentos ámbar.
-- Modos Claro y Oscuro con detección de preferencias de sistema operativo.
-- Transiciones ultraligeras de 0.2s sin bloqueos ni spinners pesados.
-- Compatible con dispositivos móviles (PWA ready con `manifest.json` e iconos optimizados).
+### Experiencia Visual
+- Interfaz cuidada con tonos oscuros zinc, microinteracciones fluidas y tipografía clara.
+- Selector de tema Claro / Oscuro con detección de preferencia del sistema.
+- Compatibilidad completa para móviles e instalación PWA con `manifest.json`.
 
 ---
 
-## 🛠️ Stack Tecnológico
+## Stack Tecnológico
 
-| Capa | Tecnología | Propósito |
+| Capa | Herramienta | Utilidad |
 | :--- | :--- | :--- |
-| **Framework** | [Next.js 15 (App Router)](https://nextjs.org/) | Enrutamiento moderno, SSR estático e hidratación selectiva |
-| **Biblioteca UI** | [React 19](https://react.dev/) | Gestión de componentes y concurrencia |
-| **Lenguaje** | [TypeScript 5](https://www.typescriptlang.org/) | Tipado estricto de tareas, prioridades y reglas |
-| **Estilos** | [Tailwind CSS 3.4](https://tailwindcss.com/) | Utilidades CSS optimizadas y diseño responsivo |
-| **Estado Global** | [Zustand 5](https://zustand-demo.pmnd.rs/) | Gestión de estado reactivo con persistencia en `localStorage` |
-| **Fechas** | [date-fns 4](https://date-fns.org/) | Manipulación, formateo e internacionalización en español |
-| **Iconografía** | [Lucide React](https://lucide.dev/) | Iconos vectoriales consistentes y ligeros |
-| **Primitivas UI** | [Radix UI](https://www.radix-ui.com/) | Componentes accesibles (Dialog, Popover, Select, Switch) |
+| **Framework** | Next.js 15 (App Router) | Renderizado estático optimizado, hidratación selectiva y enrutamiento rápido |
+| **Biblioteca UI** | React 19 | Arquitectura modular de componentes y hooks |
+| **Tipado** | TypeScript 5 | Tipos estrictos para tareas, prioridades y frecuencias |
+| **Estilos** | Tailwind CSS 3.4 | Sistema de diseño responsivo y tokens visuales |
+| **Estado Global** | Zustand 5 + Persist | Estado reactivo con sincronización local continua (`localStorage`) |
+| **Fechas** | date-fns 4 | Motor de cálculo de semanas, meses y recurrencias |
+| **Iconografía** | Lucide React | Iconos vectoriales limpios y minimalistas |
+| **Primitivas UI** | Radix UI | Componentes accesibles (Dialog, Popover, Select, Switch) |
 
 ---
 
-## 📂 Estructura del Proyecto
+## Estructura del Proyecto
 
 ```text
 nidus/
+├── docs/screenshots/        # Capturas de demostración para el README
 ├── public/                  # Favicons, logo oficial, isotipo y manifest PWA
 ├── src/
-│   ├── app/                 # Rutas de Next.js App Router
-│   │   ├── page.tsx         # Entrada raíz (render directo de Hoy)
-│   │   ├── today/           # Agenda diaria y módulo de pendientes
+│   ├── app/                 # Rutas de la aplicación (Next.js App Router)
+│   │   ├── page.tsx         # Render directo de la jornada de hoy
+│   │   ├── today/           # Agenda diaria y bandeja de pendientes
 │   │   ├── week/            # Planificador semanal de 7 días
-│   │   ├── month/           # Calendario mensual interactivo
-│   │   ├── recurring/       # Motor de hábitos y rutinas con presets
-│   │   └── settings/        # Preferencias de tema, datos y perfil
+│   │   ├── month/           # Calendario mensual
+│   │   ├── recurring/       # Gestor de rutinas y hábitos
+│   │   └── settings/        # Configuración general y tema
 │   ├── components/
-│   │   ├── auth/            # Gatekeeper, validación de PIN y solicitud de acceso
-│   │   ├── layout/          # Barra lateral, encabezados y transiciones
-│   │   ├── tasks/           # Formularios, items de tareas, posponer y quick-add
-│   │   └── ui/              # Componentes base reutilizables e isotipo
-│   ├── lib/                 # Motor de recurrencia, utilidades de fecha y cn()
-│   ├── store/               # Stores de Zustand (tareas, rutinas, auth, ui)
-│   └── types/               # Definiciones de TypeScript
-├── .env.example             # Plantilla de variables de entorno seguras
-├── next.config.ts           # Configuración de Next.js
-├── tailwind.config.ts       # Tokens y extensiones de diseño
-└── tsconfig.json            # Configuración estricta de compilación
+│   │   ├── layout/          # Barra lateral de navegación y contenedores
+│   │   ├── tasks/           # Formularios, tarjetas de tarea y modal de posponer
+│   │   └── ui/              # Componentes base e isotipo
+│   ├── lib/                 # Utilidades de fechas, motor de recurrencia y cn()
+│   ├── store/               # Stores de Zustand (tareas, rutinas, ui)
+│   └── types/               # Tipos e interfaces globales
+├── tailwind.config.ts       # Configuración de estilos
+└── tsconfig.json            # Configuración de TypeScript
 ```
 
 ---
 
-## 🚀 Puesta en Marcha Local
+## Puesta en Marcha Local
 
-### 1. Clonar el repositorio
 ```bash
+# 1. Clonar el repositorio
 git clone https://github.com/ikercarretero01-gif/NIDUS.git
 cd NIDUS
-```
 
-### 2. Instalar dependencias
-```bash
+# 2. Instalar dependencias
 npm install
-```
 
-### 3. Configurar variables de entorno
-Crea un archivo local `.env.local` a partir de la plantilla:
-```bash
-cp .env.example .env.local
-```
-
-Edita `.env.local` para establecer tu PIN de 4 dígitos:
-```env
-NEXT_PUBLIC_OWNER_PIN=9891
-```
-
-> [!NOTE]
-> El archivo `.env.local` está incluido en `.gitignore` para garantizar que tu PIN privado nunca se suba al repositorio.
-
-### 4. Iniciar el servidor de desarrollo
-```bash
+# 3. Iniciar el servidor local
 npm run dev
 ```
-La aplicación estará disponible en [http://localhost:3000](http://localhost:3000).
+
+La aplicación se abrirá en [http://localhost:3000](http://localhost:3000).
 
 ---
 
-## 🌐 Guía de Despliegue en Vercel
+## Licencia
 
-1. **Subir cambios a GitHub:** Asegúrate de que el repositorio en GitHub esté actualizado en la rama `main`.
-2. **Importar Proyecto:** Inicia sesión en [Vercel](https://vercel.com/) y selecciona **Add New...** > **Project** > Importar `NIDUS`.
-3. **Configurar Variable de Entorno:**
-   - En la sección **Environment Variables**, añade:
-     - **Key:** `NEXT_PUBLIC_OWNER_PIN`
-     - **Value:** Tu PIN personal de 4 dígitos (p. ej. `9891`).
-4. **Desplegar:** Haz clic en **Deploy**. El proceso de compilación y optimización estática tomará menos de 1 minuto.
-
-Cualquier usuario que visite la URL generada verá la pantalla de acceso privado y la opción de solicitar credenciales a tu dirección de correo, manteniendo tu información estrictamente segura.
-
----
-
-## 📄 Licencia
-
-Desarrollado y mantenido por **Iker Carretero**. Proyecto personal protegido bajo licencia privada.
-
+Desarrollado por **Iker Carretero**. Proyecto personal.
