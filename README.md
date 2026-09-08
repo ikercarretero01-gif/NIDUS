@@ -17,6 +17,11 @@
   <img src="https://img.shields.io/badge/Licencia-Open%20Source-green?style=flat-square" alt="Licencia" />
 </p>
 
+<p align="center">
+  <a href="https://nidus-two.vercel.app/web"><strong>🌐 Ver Web Oficial</strong></a> &nbsp;•&nbsp; 
+  <a href="https://nidus-two.vercel.app"><strong>🚀 Abrir WebApp Nidus</strong></a>
+</p>
+
 ---
 
 ## El Significado de Nidus
@@ -119,6 +124,10 @@ npm run dev
 ```
 
 La aplicación se abrirá en [http://localhost:3000](http://localhost:3000).
+
+También puedes acceder a la versión en producción desplegada en Vercel:
+- **Web Oficial de Presentación:** [https://nidus-two.vercel.app/web](https://nidus-two.vercel.app/web)
+- **Aplicación / Agenda:** [https://nidus-two.vercel.app](https://nidus-two.vercel.app)
 
 ---
 
