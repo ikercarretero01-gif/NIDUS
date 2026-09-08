@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <strong>Agenda diaria intencional y motor de rutinas recurrentes. Diseñada para concentrarse en ejecutar, no en gestionar listas infinitas.</strong>
+  <strong>Agenda diaria minimalista para optimizar tu tiempo y avanzar en tus proyectos personales. Simpleza radical, cero fricción de gestión.</strong>
 </p>
 
 <p align="center">
@@ -14,20 +14,31 @@
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript" alt="TypeScript" />
   <img src="https://img.shields.io/badge/Tailwind-3.4-38B2AC?style=flat-square&logo=tailwind-css" alt="Tailwind CSS" />
   <img src="https://img.shields.io/badge/State-Zustand-orange?style=flat-square" alt="Zustand" />
+  <img src="https://img.shields.io/badge/Licencia-Open%20Source-green?style=flat-square" alt="Licencia" />
 </p>
+
+---
+
+## El Significado de Nidus
+
+Del latín ***nidus*** («nido», el lugar donde uno se asienta y cuida lo que está por crecer) y enraizado con el concepto clásico de ***agenda*** (del verbo latino *agere*, «las cosas que se han de hacer»).
+
+Nidus está concebido como un refugio de trabajo: un espacio seguro y minimalista donde incubar tus proyectos personales, ordenar tus hábitos diarios y avanzar con foco, lejos de la dispersión y el ruido de las herramientas convencionales.
 
 ---
 
 ## Por qué Nidus
 
-La mayoría de herramientas de productividad se convierten en vertederos de tareas atrasadas. Se pierde más tiempo configurando etiquetas, prioridades complejas y carpetas anidadas que completando trabajo real.
+La mayoría de herramientas de productividad caen en dos extremos:
 
-Nidus replantea este flujo con un enfoque directo:
+1. **Herramientas sobrecargadas (Notion, ClickUp):** Ofrecen infinitas opciones, pero acabas perdiendo más tiempo diseñando plantillas, tablas y configurando propiedades que completando trabajo real.
+2. **Aplicaciones de pago por suscripción (Things 3, Todoist, Sunsama):** Bloquean funciones esenciales tras muros de pago o suscripciones mensuales recurrentes.
 
-- **Enfoque en el día a día:** La vista central es la agenda de hoy, segmentada naturalmente en bloques de mañana, tarde y noche para dar contexto temporal sin rigidez.
-- **Hábitos y compromisos sin fricción:** Rutinas periódicas (entrenamiento, lectura, revisiones) que aparecen en la agenda de forma automática según los días elegidos, sin ensuciar la bandeja de entrada cuando no tocan.
-- **Replanificación ágil:** Si una tarea no se completa, no se pierde ni genera culpa. Un clic abre el selector interactivo para posponerla al día exacto con un solo toque.
-- **Velocidad nativa:** Carga instantánea, persistencia local en el dispositivo del usuario y cero esperas entre pantallas.
+**Nidus nace como alternativa intencional:** una agenda diaria limpia, rápida y gratuita pensada para organizar tu jornada, tus hábitos y tus proyectos personales sin distracciones ni configuraciones innecesarias.
+
+- **Diseñada para ejecutar:** Entras y ves lo que tienes que hacer hoy, distribuido de forma natural en bloques (mañana, tarde y noche).
+- **Control total de tus hábitos:** Rutinas periódicas (gimnasio, lectura, repaso de proyectos) que se sincronizan solas en los días que tú decidas.
+- **Tu propio espacio, 100% personalizable:** Diseñada para clonar el repositorio, desplegarla en tu propia infraestructura o en Vercel gratis, y adaptarla a tus proyectos y rutinas cotidianas.
 
 ---
 
@@ -152,6 +163,17 @@ La aplicación se abrirá en [http://localhost:3000](http://localhost:3000).
 
 ---
 
+## Adaptación a Proyectos Personales
+
+Nidus está construida con una arquitectura modular para que cualquier desarrollador pueda utilizarla como su propia agenda o adaptarla al flujo de trabajo de sus proyectos personales:
+
+- **Etiquetas y categorías:** Modifica las áreas de enfoque en `src/lib/constants.ts`.
+- **Franjas horarias:** Ajusta los bloques de mañana, tarde y noche según tus hábitos en `src/lib/recurrence-engine.ts`.
+- **Persistencia local:** Los datos no dependen de servicios de terceros ni bases de datos de pago; se guardan en el almacenamiento de tu navegador de manera segura e instantánea.
+- **Despliegue gratuito:** Listo para publicar en un clic en [Vercel](https://vercel.com/) con cero costes de mantenimiento.
+
+---
+
 ## Licencia
 
-Desarrollado por **Iker Carretero**. Proyecto personal.
+Desarrollado por **Iker Carretero**. Proyecto de código abierto para productividad personal.
