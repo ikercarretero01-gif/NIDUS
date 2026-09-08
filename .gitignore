@@ -54,3 +54,7 @@ $RECYCLE.BIN/
 *.swp
 *.swo
 
+# local media scratch
+/imagenes/
+
+

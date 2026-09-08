@@ -42,38 +42,6 @@ La mayoría de herramientas de productividad caen en dos extremos:
 
 ---
 
-## Vista Previa
-
-<!--
-===================================================================
-[CAPTURAS SUGERIDAS PARA ESTA SECCIÓN]
-Guarda tus imágenes en la carpeta 'docs/screenshots/' con estos nombres:
-- today-view.png      -> Captura de la Agenda Diaria en modo oscuro mostrando los bloques y barra de progreso.
-- routines-view.png   -> Captura de la pantalla de Rutinas con los presets (Gym L-X-V, Diario) y selectores de días.
-- postpone-modal.png  -> Captura del modal de posponer con el mini calendario mensual desplegado.
-===================================================================
--->
-
-<p align="center">
-  <img src="docs/screenshots/today-view.png" alt="Agenda Diaria Nidus" width="850" />
-  <br />
-  <em>Agenda diaria estructurada por franjas horarias con progreso en tiempo real.</em>
-</p>
-
-<br />
-
-<p align="center">
-  <img src="docs/screenshots/routines-view.png" alt="Gestor de Rutinas" width="415" />
-  &nbsp;&nbsp;
-  <img src="docs/screenshots/postpone-modal.png" alt="Modal de Posponer Tarea" width="415" />
-</p>
-
-<p align="center">
-  <em>Izquierda: Configuración de rutinas recurrentes por días. Derecha: Replanificación rápida con mini calendario.</em>
-</p>
-
----
-
 ## Qué Hace Diferente a Nidus
 
 ### Gestión por Energía, no por Minutos
@@ -112,25 +80,26 @@ Tus notas, ideas y proyectos son tuyos. Nidus almacena tus datos directamente en
 
 ```text
 nidus/
-├── docs/screenshots/        # Capturas de demostración para el README
 ├── public/                  # Favicons, logo oficial, isotipo y manifest PWA
 ├── src/
 │   ├── app/                 # Rutas de la aplicación (Next.js App Router)
-│   │   ├── page.tsx         # Render directo de la jornada de hoy
-│   │   ├── today/           # Agenda diaria y bandeja de pendientes
+│   │   ├── page.tsx         # Render directo de la agenda de hoy
+│   │   ├── today/           # Agenda diaria por bloques y tareas pendientes
 │   │   ├── week/            # Planificador semanal de 7 días
-│   │   ├── month/           # Calendario mensual
+│   │   ├── month/           # Calendario mensual interactivo
 │   │   ├── recurring/       # Gestor de rutinas y hábitos
+│   │   ├── projects/        # Gestión de proyectos personales y métricas
 │   │   └── settings/        # Configuración general y tema
 │   ├── components/
-│   │   ├── layout/          # Barra lateral de navegación y contenedores
+│   │   ├── layout/          # Barra lateral, cabeceras y tema
 │   │   ├── tasks/           # Formularios, tarjetas de tarea y modal de posponer
 │   │   └── ui/              # Componentes base e isotipo
-│   ├── lib/                 # Utilidades de fechas, motor de recurrencia y cn()
-│   ├── store/               # Stores de Zustand (tareas, rutinas, ui)
-│   └── types/               # Tipos e interfaces globales
-├── tailwind.config.ts       # Configuración de estilos
-└── tsconfig.json            # Configuración de TypeScript
+│   ├── lib/                 # Motor de recurrencia, fechas y utilidades
+│   ├── store/               # Stores de Zustand (tareas, rutinas, proyectos, ui)
+│   └── types/               # Tipos e interfaces globales de TypeScript
+├── next.config.ts           # Configuración de Next.js
+├── tailwind.config.ts       # Tokens y temas de diseño
+└── tsconfig.json            # Configuración estricta de TypeScript
 ```
 
 ---
