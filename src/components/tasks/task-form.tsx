@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { useTaskStore } from '@/store/task-store';
+import { useProjectStore } from '@/store/project-store';
 import type { Task, Priority } from '@/types';
 import { DEFAULT_TAGS } from '@/lib/constants';
 import { PRIORITY_CONFIG } from '@/types';
@@ -18,6 +19,7 @@ export function TaskForm({ task, date, onClose }: TaskFormProps) {
   const addTask = useTaskStore((s) => s.addTask);
   const updateTask = useTaskStore((s) => s.updateTask);
   const deleteTask = useTaskStore((s) => s.deleteTask);
+  const projects = useProjectStore((s) => s.projects);
   const isEditing = !!task;
 
   const [title, setTitle] = useState(task?.title || '');
@@ -26,6 +28,7 @@ export function TaskForm({ task, date, onClose }: TaskFormProps) {
   const [time, setTime] = useState(task?.time || '');
   const [priority, setPriority] = useState<Priority>(task?.priority || 'media');
   const [tag, setTag] = useState(task?.tag || '');
+  const [projectId, setProjectId] = useState<string>(task?.projectId || '');
   const [isPersistentReminder, setIsPersistentReminder] = useState(
     task?.isPersistentReminder || false
   );
@@ -42,6 +45,7 @@ export function TaskForm({ task, date, onClose }: TaskFormProps) {
         time: time || undefined,
         priority,
         tag: tag || undefined,
+        projectId: projectId || undefined,
         isPersistentReminder,
       });
     } else {
@@ -54,6 +58,7 @@ export function TaskForm({ task, date, onClose }: TaskFormProps) {
         isPersistentReminder,
         priority,
         tag: tag || undefined,
+        projectId: projectId || undefined,
       });
     }
 
@@ -156,6 +161,47 @@ export function TaskForm({ task, date, onClose }: TaskFormProps) {
               ))}
             </div>
           </div>
+
+          {/* Proyecto Personal */}
+          {projects.length > 0 && (
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-xs text-[var(--muted-foreground)]">
+                  Proyecto personal
+                </label>
+                {projectId && (
+                  <button
+                    type="button"
+                    onClick={() => setProjectId('')}
+                    className="text-[11px] text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
+                  >
+                    Sin proyecto
+                  </button>
+                )}
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {projects.map((p) => (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() => setProjectId(projectId === p.id ? '' : p.id)}
+                    className={cn(
+                      'flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs font-medium transition-default',
+                      projectId === p.id
+                        ? 'border-[var(--foreground)] bg-[var(--foreground)] text-[var(--background)]'
+                        : 'border-[var(--border)] text-[var(--muted-foreground)] hover:border-[var(--muted-foreground)]'
+                    )}
+                  >
+                    <span
+                      className="h-2 w-2 rounded-full shrink-0"
+                      style={{ backgroundColor: p.color }}
+                    />
+                    <span>{p.name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Tag */}
           <div>

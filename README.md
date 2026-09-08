@@ -74,32 +74,22 @@ Guarda tus imágenes en la carpeta 'docs/screenshots/' con estos nombres:
 
 ---
 
-## Funcionalidades Clave
+## Qué Hace Diferente a Nidus
 
-### Agenda Diaria por Bloques
-- Navegación rápida con accesos directos (*Ayer, Hoy, Mañana*) y selector de calendario.
-- Agrupación automática de tareas según horario: **Mañana** (hasta las 14:00), **Tarde** (14:00 a 20:00) y **Noche** (a partir de las 20:00).
-- Métricas visuales de cumplimiento con barra de progreso interactiva.
+### Gestión por Energía, no por Minutos
+Las agendas tradicionales te obligan a encajar tareas en franjas rígidas que rara vez se cumplen. Nidus organiza tu jornada en bloques orgánicos de mañana, tarde y noche, ayudándote a distribuir el trabajo profundo y los proyectos personales según tu nivel de concentración real.
 
-### Bandeja de Pendientes y Posposición Inteligente
-- Detección automática de tareas pendientes que quedaron sin marcar en días anteriores.
-- Botón **Posponer** por tarea con mini calendario mensual interactivo y atajos inmediatos (*Hoy, Mañana, +2 días, Siguiente semana*).
-- Acción rápida para arrastrar todas las pendientes acumuladas a la jornada actual con un solo clic.
+### Incubadora de Rutinas: Hábitos que se Mantienen Solos
+El progreso en proyectos personales depende de la consistencia. Configura hábitos y compromisos periódicos (como sesiones de entrenamiento L-X-V, bloques de desarrollo o lectura) y Nidus los sincroniza en tu agenda únicamente los días elegidos, eliminando la fatiga de decidir qué toca hacer cada mañana.
 
-### Motor de Rutinas Recurrentes
-- Diseñado para hábitos y compromisos cíclicos (rutinas de gimnasio, estudio, revisiones periódicas).
-- Presets rápidos de un clic: *Gym (L-X-V), Todos los días, Días laborables (L-V), Fines de semana*.
-- Selectores manuales para activar cualquier combinación de días de la semana (`L · M · X · J · V · S · D`).
-- Inyección automática en la agenda del día como tareas completables con seguimiento de racha.
+### Replanificación Sin Culpa: Cero Ansiedad de Tareas Atrasadas
+La productividad real asume que los imprevistos suceden. En lugar de generar una lista interminable de tareas atrasadas que generan culpa, Nidus rescata lo inconcluso de días pasados y te permite reprogramarlo en un clic hacia el día oportuno con su mini calendario interactivo o incorporarlo a tu jornada con un solo toque.
 
-### Vistas Semanal y Mensual
-- **Planificador Semanal:** Matriz de 7 días para distribuir la carga de trabajo de un vistazo.
-- **Calendario Mensual:** Vista global con indicadores de volumen diario y panel lateral de detalle.
+### Visión Panorámica sin Perder el Foco
+Alterna con un clic entre la ejecución del día a día, la perspectiva semanal de 7 días para equilibrar cargas de trabajo y la visión mensual para proyectar plazos sin saturarte.
 
-### Experiencia Visual
-- Interfaz cuidada con tonos oscuros zinc, microinteracciones fluidas y tipografía clara.
-- Selector de tema Claro / Oscuro con detección de preferencia del sistema.
-- Compatibilidad completa para móviles e instalación PWA con `manifest.json`.
+### Local-First: Privacidad Absoluta y Cero Dependencias
+Tus notas, ideas y proyectos son tuyos. Nidus almacena tus datos directamente en tu propio dispositivo, ofreciendo una experiencia instantánea, sin tiempos de carga, sin rastreo y sin costes de suscripción.
 
 ---
 

@@ -10,6 +10,7 @@ import {
   CalendarRange,
   Calendar,
   Repeat,
+  FolderKanban,
   Settings,
   ChevronLeft,
   ChevronRight,
@@ -25,6 +26,7 @@ const NAV_ITEMS = [
   { href: '/week', label: 'Semana', icon: CalendarRange },
   { href: '/month', label: 'Mes', icon: Calendar },
   { href: '/recurring', label: 'Rutinas', icon: Repeat },
+  { href: '/projects', label: 'Proyectos', icon: FolderKanban },
   { href: '/settings', label: 'Ajustes', icon: Settings },
 ];
 

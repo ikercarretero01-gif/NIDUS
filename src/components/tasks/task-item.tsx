@@ -7,6 +7,7 @@ import type { Task } from '@/types';
 import { PRIORITY_CONFIG } from '@/types';
 import { useTaskStore } from '@/store/task-store';
 import { useRecurrenceStore } from '@/store/recurrence-store';
+import { useProjectStore } from '@/store/project-store';
 
 interface TaskItemProps {
   task: Task;
@@ -27,8 +28,10 @@ export function TaskItem({
   const deleteTask = useTaskStore((s) => s.deleteTask);
   const addCompletion = useRecurrenceStore((s) => s.addCompletion);
   const removeCompletion = useRecurrenceStore((s) => s.removeCompletion);
+  const getProjectById = useProjectStore((s) => s.getProjectById);
   const [isAnimating, setIsAnimating] = useState(false);
 
+  const project = getProjectById(task.projectId);
   const priorityConfig = PRIORITY_CONFIG[task.priority];
 
   const handleToggle = () => {
@@ -121,6 +124,23 @@ export function TaskItem({
             {task.tag && (
               <span className="rounded-md border border-[var(--border)] px-1.5 py-0.5 text-[10px]">
                 {task.tag}
+              </span>
+            )}
+            {project && (
+              <span
+                className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-medium border"
+                style={{
+                  borderColor: `${project.color}40`,
+                  backgroundColor: `${project.color}15`,
+                  color: project.color,
+                }}
+                title={`Proyecto: ${project.name}`}
+              >
+                <span
+                  className="h-1.5 w-1.5 rounded-full shrink-0"
+                  style={{ backgroundColor: project.color }}
+                />
+                <span>{project.name}</span>
               </span>
             )}
             {task.isPersistentReminder && (

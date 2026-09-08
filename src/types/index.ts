@@ -11,10 +11,21 @@ export interface Task {
   isPersistentReminder: boolean;
   priority: Priority;
   tag?: string;
+  projectId?: string;     // ID del proyecto vinculado
   recurrenceRuleId?: string;
   isRecurrenceException: boolean;
   createdAt: string;       // ISO timestamp
   updatedAt: string;       // ISO timestamp
+}
+
+export interface Project {
+  id: string;
+  name: string;
+  description?: string;
+  color: string;          // Hex / color token (ej: '#3b82f6', '#10b981', etc.)
+  icon?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export type RecurrenceFrequency = 'daily' | 'weekly' | 'monthly';
@@ -29,6 +40,7 @@ export interface RecurrenceRule {
     isPersistentReminder: boolean;
     priority: Priority;
     tag?: string;
+    projectId?: string;
   };
   frequency: RecurrenceFrequency;
   interval: number;        // cada N días/semanas/meses
@@ -49,7 +61,7 @@ export interface CompletionRecord {
   completedAt: string;     // ISO timestamp
 }
 
-export type ViewType = 'today' | 'week' | 'month' | 'recurring' | 'settings';
+export type ViewType = 'today' | 'week' | 'month' | 'recurring' | 'projects' | 'settings';
 
 export interface TimeBlock {
   label: string;
