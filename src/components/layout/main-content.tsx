@@ -1,10 +1,17 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
 import { useUIStore } from '@/store/ui-store';
 import { cn } from '@/lib/cn';
 
 export function MainContent({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
   const sidebarOpen = useUIStore((s) => s.sidebarOpen);
+  const isPublicRoute = pathname === '/web' || pathname?.startsWith('/web');
+
+  if (isPublicRoute) {
+    return <main className="w-full min-h-screen">{children}</main>;
+  }
 
   return (
     <main

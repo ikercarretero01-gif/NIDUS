@@ -48,6 +48,10 @@ export function Sidebar() {
     []
   );
 
+  if (pathname === '/web' || pathname?.startsWith('/web')) {
+    return null;
+  }
+
   return (
     <aside
       className={cn(

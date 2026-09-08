@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import {
   Mail,
   Copy,
@@ -17,6 +18,9 @@ interface GatekeeperProps {
 }
 
 export function Gatekeeper({ children }: GatekeeperProps) {
+  const pathname = usePathname();
+  const isPublicRoute = pathname === '/web' || pathname?.startsWith('/web');
+
   const [mounted, setMounted] = useState(false);
   const [isClientAuth, setIsClientAuth] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -137,8 +141,8 @@ export function Gatekeeper({ children }: GatekeeperProps) {
   const mailtoUrl =
     'mailto:ikercarretero01@gmail.com?subject=Solicitud%20de%20acceso%20a%20Nidus&body=Hola%20Iker,%20me%20gustar%C3%ADa%20solicitar%20acceso%20a%20tu%20instancia%20privada%20de%20Nidus.';
 
-  // Si está autenticado, renderizar la aplicación de inmediato sin demoras
-  if (isAuthenticated) {
+  // Si es ruta pública (/web) o está autenticado, renderizar sin pantalla de bloqueo
+  if (isPublicRoute || isAuthenticated) {
     return <>{children}</>;
   }
 
