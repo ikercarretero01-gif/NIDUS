@@ -61,6 +61,9 @@ La productividad real asume que los imprevistos suceden. En lugar de generar una
 ### Visión Panorámica sin Perder el Foco
 Alterna con un clic entre la ejecución del día a día, la perspectiva semanal de 7 días para equilibrar cargas de trabajo y la visión mensual para proyectar plazos sin saturarte.
 
+### Separación Inteligente: Agenda Diaria vs Roadmap de Proyectos
+A menudo las herramientas mezclan las tareas operativas de hoy con los hitos estratégicos a largo plazo, saturando la vista diaria. En Nidus, los proyectos cuentan con su propio **Tablero de Roadmap Visual** organizado en metas por fases (*Por Empezar*, *En Curso*, *Conseguidas*). Las metas del proyecto no ensucian tu agenda diaria: tú decides cuándo enviar una meta a tu día a día con el botón **«Hacer hoy»** o vincular tareas de tu jornada como subtareas de ejecución.
+
 ### Local-First: Privacidad Absoluta y Cero Dependencias
 Tus notas, ideas y proyectos son tuyos. Nidus almacena tus datos directamente en tu propio dispositivo, ofreciendo una experiencia instantánea, sin tiempos de carga, sin rastreo y sin costes de suscripción.
 

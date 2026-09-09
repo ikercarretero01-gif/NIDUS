@@ -12,10 +12,25 @@ export interface Task {
   priority: Priority;
   tag?: string;
   projectId?: string;     // ID del proyecto vinculado
+  projectGoalId?: string; // ID de la meta del roadmap asociada (opcional)
   recurrenceRuleId?: string;
   isRecurrenceException: boolean;
   createdAt: string;       // ISO timestamp
   updatedAt: string;       // ISO timestamp
+}
+
+export type ProjectGoalStatus = 'todo' | 'in_progress' | 'completed';
+
+export interface ProjectGoal {
+  id: string;
+  projectId: string;
+  title: string;
+  description?: string;
+  status: ProjectGoalStatus;
+  priority: Priority;
+  targetDate?: string;    // Fecha estimada / objetivo del roadmap (YYYY-MM-DD)
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Project {

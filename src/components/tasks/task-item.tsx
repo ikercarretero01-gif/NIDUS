@@ -29,9 +29,11 @@ export function TaskItem({
   const addCompletion = useRecurrenceStore((s) => s.addCompletion);
   const removeCompletion = useRecurrenceStore((s) => s.removeCompletion);
   const getProjectById = useProjectStore((s) => s.getProjectById);
+  const getGoalById = useProjectStore((s) => s.getGoalById);
   const [isAnimating, setIsAnimating] = useState(false);
 
   const project = getProjectById(task.projectId);
+  const goal = getGoalById(task.projectGoalId);
   const priorityConfig = PRIORITY_CONFIG[task.priority];
 
   const handleToggle = () => {
@@ -141,6 +143,15 @@ export function TaskItem({
                   style={{ backgroundColor: project.color }}
                 />
                 <span>{project.name}</span>
+              </span>
+            )}
+            {goal && (
+              <span
+                className="inline-flex items-center gap-1 rounded-md bg-[var(--accent)] border border-[var(--border)] px-1.5 py-0.5 text-[10px] font-medium text-[var(--foreground)] truncate max-w-[150px]"
+                title={`Subtarea de la meta: ${goal.title}`}
+              >
+                <span className="text-[10px] shrink-0">🎯</span>
+                <span className="truncate">{goal.title}</span>
               </span>
             )}
             {task.isPersistentReminder && (

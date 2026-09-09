@@ -29,9 +29,23 @@ export function TaskForm({ task, date, onClose }: TaskFormProps) {
   const [priority, setPriority] = useState<Priority>(task?.priority || 'media');
   const [tag, setTag] = useState(task?.tag || '');
   const [projectId, setProjectId] = useState<string>(task?.projectId || '');
+  const [projectGoalId, setProjectGoalId] = useState<string>(task?.projectGoalId || '');
   const [isPersistentReminder, setIsPersistentReminder] = useState(
     task?.isPersistentReminder || false
   );
+
+  const allGoals = useProjectStore((s) => s.goals || []);
+  const projectGoals = projectId ? allGoals.filter((g) => g.projectId === projectId) : [];
+
+  const handleSelectProject = (id: string) => {
+    if (projectId === id) {
+      setProjectId('');
+      setProjectGoalId('');
+    } else {
+      setProjectId(id);
+      setProjectGoalId('');
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,6 +60,7 @@ export function TaskForm({ task, date, onClose }: TaskFormProps) {
         priority,
         tag: tag || undefined,
         projectId: projectId || undefined,
+        projectGoalId: projectId && projectGoalId ? projectGoalId : undefined,
         isPersistentReminder,
       });
     } else {
@@ -59,6 +74,7 @@ export function TaskForm({ task, date, onClose }: TaskFormProps) {
         priority,
         tag: tag || undefined,
         projectId: projectId || undefined,
+        projectGoalId: projectId && projectGoalId ? projectGoalId : undefined,
       });
     }
 
@@ -164,18 +180,18 @@ export function TaskForm({ task, date, onClose }: TaskFormProps) {
 
           {/* Proyecto Personal */}
           {projects.length > 0 && (
-            <div>
-              <div className="flex items-center justify-between mb-2">
+            <div className="space-y-2.5">
+              <div className="flex items-center justify-between">
                 <label className="text-xs text-[var(--muted-foreground)]">
-                  Proyecto personal
+                  Proyecto personal (opcional)
                 </label>
                 {projectId && (
                   <button
                     type="button"
-                    onClick={() => setProjectId('')}
-                    className="text-[11px] text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
+                    onClick={() => handleSelectProject(projectId)}
+                    className="text-[11px] text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-default"
                   >
-                    Sin proyecto
+                    Quitar proyecto
                   </button>
                 )}
               </div>
@@ -184,9 +200,9 @@ export function TaskForm({ task, date, onClose }: TaskFormProps) {
                   <button
                     key={p.id}
                     type="button"
-                    onClick={() => setProjectId(projectId === p.id ? '' : p.id)}
+                    onClick={() => handleSelectProject(p.id)}
                     className={cn(
-                      'flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs font-medium transition-default',
+                      'flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs font-medium transition-default cursor-pointer',
                       projectId === p.id
                         ? 'border-[var(--foreground)] bg-[var(--foreground)] text-[var(--background)]'
                         : 'border-[var(--border)] text-[var(--muted-foreground)] hover:border-[var(--muted-foreground)]'
@@ -200,6 +216,35 @@ export function TaskForm({ task, date, onClose }: TaskFormProps) {
                   </button>
                 ))}
               </div>
+
+              {/* Selector de Meta del Roadmap del Proyecto si hay proyecto elegido */}
+              {projectId && (
+                <div className="pt-1">
+                  <label className="text-[11px] text-[var(--muted-foreground)] mb-1.5 flex items-center gap-1">
+                    <span>🎯</span>
+                    <span>Vincular como subtarea a una meta del roadmap:</span>
+                  </label>
+                  {projectGoals.length > 0 ? (
+                    <select
+                      value={projectGoalId}
+                      onChange={(e) => setProjectGoalId(e.target.value)}
+                      className="w-full rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 py-1.5 text-xs text-[var(--foreground)] outline-none focus:border-[var(--foreground)] transition-default cursor-pointer"
+                    >
+                      <option value="">— Tarea suelta del proyecto (sin meta) —</option>
+                      {projectGoals.map((g) => (
+                        <option key={g.id} value={g.id}>
+                          {g.status === 'completed' ? '✓ ' : g.status === 'in_progress' ? '⏳ ' : '○ '}
+                          {g.title}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <p className="text-[11px] text-[var(--muted-foreground)] italic">
+                      Este proyecto no tiene metas creadas aún. Se guardará como tarea suelta del proyecto.
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
           )}
 

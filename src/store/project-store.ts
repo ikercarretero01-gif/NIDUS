@@ -2,7 +2,7 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { Project } from '@/types';
+import type { Project, ProjectGoal } from '@/types';
 import { generateId } from '@/lib/recurrence-engine';
 
 export const PROJECT_COLORS = [
@@ -43,18 +43,80 @@ const DEFAULT_PROJECTS: Project[] = [
   },
 ];
 
+const DEFAULT_GOALS: ProjectGoal[] = [
+  {
+    id: 'goal-w1',
+    projectId: 'proj-web',
+    title: 'Diseñar arquitectura de componentes e interfaces',
+    description: 'Definir tokens de diseño, sistema visual y maquetación responsiva.',
+    status: 'completed',
+    priority: 'alta',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: 'goal-w2',
+    projectId: 'proj-web',
+    title: 'Separación de espacio Agenda vs Roadmap de Proyectos',
+    description: 'Las metas del proyecto forman el roadmap estratégico; las subtareas diarias se ejecutan en la agenda.',
+    status: 'in_progress',
+    priority: 'alta',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: 'goal-w3',
+    projectId: 'proj-web',
+    title: 'Lanzar y verificar despliegue en producción',
+    description: 'Configurar variables de entorno y validar dominio en Vercel.',
+    status: 'todo',
+    priority: 'media',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: 'goal-h1',
+    projectId: 'proj-health',
+    title: 'Establecer rutina de entrenamiento 4 días por semana',
+    description: 'Combinar hipertrofia y trabajo cardiovascular continuo.',
+    status: 'in_progress',
+    priority: 'alta',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: 'goal-p1',
+    projectId: 'proj-personal',
+    title: 'Completar 1 libro al mes sobre desarrollo y finanzas',
+    description: 'Lectura diaria de 20 minutos antes de dormir.',
+    status: 'in_progress',
+    priority: 'media',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+];
+
 interface ProjectState {
   projects: Project[];
+  goals: ProjectGoal[];
   addProject: (projectData: Omit<Project, 'id' | 'createdAt' | 'updatedAt'>) => Project;
   updateProject: (id: string, updates: Partial<Project>) => void;
   deleteProject: (id: string) => void;
   getProjectById: (id?: string) => Project | undefined;
+  
+  // Metas / Roadmap
+  addGoal: (goalData: Omit<ProjectGoal, 'id' | 'createdAt' | 'updatedAt'>) => ProjectGoal;
+  updateGoal: (id: string, updates: Partial<ProjectGoal>) => void;
+  deleteGoal: (id: string) => void;
+  getGoalsByProjectId: (projectId: string) => ProjectGoal[];
+  getGoalById: (id?: string) => ProjectGoal | undefined;
 }
 
 export const useProjectStore = create<ProjectState>()(
   persist(
     (set, get) => ({
       projects: DEFAULT_PROJECTS,
+      goals: DEFAULT_GOALS,
 
       addProject: (data) => {
         const now = new Date().toISOString();
@@ -83,12 +145,52 @@ export const useProjectStore = create<ProjectState>()(
       deleteProject: (id) => {
         set((state) => ({
           projects: state.projects.filter((p) => p.id !== id),
+          goals: state.goals.filter((g) => g.projectId !== id),
         }));
       },
 
       getProjectById: (id) => {
         if (!id) return undefined;
         return get().projects.find((p) => p.id === id);
+      },
+
+      addGoal: (data) => {
+        const now = new Date().toISOString();
+        const newGoal: ProjectGoal = {
+          ...data,
+          id: generateId(),
+          createdAt: now,
+          updatedAt: now,
+        };
+        set((state) => ({
+          goals: [...(state.goals || []), newGoal],
+        }));
+        return newGoal;
+      },
+
+      updateGoal: (id, updates) => {
+        set((state) => ({
+          goals: (state.goals || []).map((g) =>
+            g.id === id
+              ? { ...g, ...updates, updatedAt: new Date().toISOString() }
+              : g
+          ),
+        }));
+      },
+
+      deleteGoal: (id) => {
+        set((state) => ({
+          goals: (state.goals || []).filter((g) => g.id !== id),
+        }));
+      },
+
+      getGoalsByProjectId: (projectId) => {
+        return (get().goals || []).filter((g) => g.projectId === projectId);
+      },
+
+      getGoalById: (id) => {
+        if (!id) return undefined;
+        return (get().goals || []).find((g) => g.id === id);
       },
     }),
     {
