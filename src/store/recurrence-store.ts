@@ -6,6 +6,13 @@ import type { RecurrenceRule, CompletionRecord } from '@/types';
 import { generateId } from '@/lib/recurrence-engine';
 import { DEFAULT_USER_ID } from '@/lib/constants';
 
+import {
+  saveRecurrenceRuleToCloud,
+  deleteRecurrenceRuleFromCloud,
+  saveCompletionToCloud,
+  deleteCompletionFromCloud,
+} from '@/lib/sync-engine';
+
 interface RecurrenceState {
   rules: RecurrenceRule[];
   completions: CompletionRecord[];
@@ -35,27 +42,34 @@ export const useRecurrenceStore = create<RecurrenceState>()(
         set((state) => ({
           rules: [...state.rules, newRule],
         }));
+        saveRecurrenceRuleToCloud(newRule);
         return newRule;
       },
 
       updateRule: (id, updates) => {
+        let updatedRule: RecurrenceRule | undefined;
         set((state) => ({
-          rules: state.rules.map((rule) =>
-            rule.id === id
-              ? { ...rule, ...updates, updatedAt: new Date().toISOString() }
-              : rule
-          ),
+          rules: state.rules.map((rule) => {
+            if (rule.id === id) {
+              updatedRule = { ...rule, ...updates, updatedAt: new Date().toISOString() };
+              return updatedRule;
+            }
+            return rule;
+          }),
         }));
+        if (updatedRule) {
+          saveRecurrenceRuleToCloud(updatedRule);
+        }
       },
 
       deleteRule: (id) => {
         set((state) => ({
           rules: state.rules.filter((rule) => rule.id !== id),
-          // También eliminar completion records asociados
           completions: state.completions.filter(
             (c) => c.recurrenceRuleId !== id
           ),
         }));
+        deleteRecurrenceRuleFromCloud(id);
       },
 
       addCompletion: (recurrenceRuleId, date) => {
@@ -74,6 +88,7 @@ export const useRecurrenceStore = create<RecurrenceState>()(
         set((state) => ({
           completions: [...state.completions, completion],
         }));
+        saveCompletionToCloud(completion);
       },
 
       removeCompletion: (recurrenceRuleId, date) => {
@@ -83,6 +98,7 @@ export const useRecurrenceStore = create<RecurrenceState>()(
               !(c.recurrenceRuleId === recurrenceRuleId && c.date === date)
           ),
         }));
+        deleteCompletionFromCloud(recurrenceRuleId, date);
       },
 
       isDateCompleted: (recurrenceRuleId, date) => {

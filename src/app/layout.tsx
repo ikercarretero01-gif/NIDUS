@@ -5,6 +5,7 @@ import { Sidebar } from '@/components/layout/sidebar';
 import { ThemeProvider } from '@/components/layout/theme-provider';
 import { MainContent } from '@/components/layout/main-content';
 import { Gatekeeper } from '@/components/auth/gatekeeper';
+import { SyncProvider } from '@/components/sync-provider';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -56,10 +57,12 @@ export default function RootLayout({
       <body className={`${geistSans.variable} font-sans antialiased`}>
         <ThemeProvider>
           <Gatekeeper>
-            <div className="flex min-h-screen">
-              <Sidebar />
-              <MainContent>{children}</MainContent>
-            </div>
+            <SyncProvider>
+              <div className="flex min-h-screen">
+                <Sidebar />
+                <MainContent>{children}</MainContent>
+              </div>
+            </SyncProvider>
           </Gatekeeper>
         </ThemeProvider>
       </body>

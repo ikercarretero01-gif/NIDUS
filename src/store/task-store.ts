@@ -6,6 +6,8 @@ import type { Task } from '@/types';
 import { generateId } from '@/lib/recurrence-engine';
 import { DEFAULT_USER_ID } from '@/lib/constants';
 
+import { saveTaskToCloud, deleteTaskFromCloud } from '@/lib/sync-engine';
+
 interface TaskState {
   tasks: Task[];
   addTask: (task: Omit<Task, 'id' | 'userId' | 'createdAt' | 'updatedAt' | 'isRecurrenceException'>) => Task;
@@ -36,37 +38,51 @@ export const useTaskStore = create<TaskState>()(
         set((state) => ({
           tasks: [...state.tasks, newTask],
         }));
+        saveTaskToCloud(newTask);
         return newTask;
       },
 
       updateTask: (id, updates) => {
+        let updatedTask: Task | undefined;
         set((state) => ({
-          tasks: state.tasks.map((task) =>
-            task.id === id
-              ? { ...task, ...updates, updatedAt: new Date().toISOString() }
-              : task
-          ),
+          tasks: state.tasks.map((task) => {
+            if (task.id === id) {
+              updatedTask = { ...task, ...updates, updatedAt: new Date().toISOString() };
+              return updatedTask;
+            }
+            return task;
+          }),
         }));
+        if (updatedTask) {
+          saveTaskToCloud(updatedTask);
+        }
       },
 
       deleteTask: (id) => {
         set((state) => ({
           tasks: state.tasks.filter((task) => task.id !== id),
         }));
+        deleteTaskFromCloud(id);
       },
 
       toggleComplete: (id) => {
+        let updatedTask: Task | undefined;
         set((state) => ({
-          tasks: state.tasks.map((task) =>
-            task.id === id
-              ? {
-                  ...task,
-                  isCompleted: !task.isCompleted,
-                  updatedAt: new Date().toISOString(),
-                }
-              : task
-          ),
+          tasks: state.tasks.map((task) => {
+            if (task.id === id) {
+              updatedTask = {
+                ...task,
+                isCompleted: !task.isCompleted,
+                updatedAt: new Date().toISOString(),
+              };
+              return updatedTask;
+            }
+            return task;
+          }),
         }));
+        if (updatedTask) {
+          saveTaskToCloud(updatedTask);
+        }
       },
 
       getTasksForDate: (date) => {

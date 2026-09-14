@@ -1,12 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { Download, Upload, Moon, Sun, Trash2, Lock, ShieldCheck } from 'lucide-react';
+import { Download, Upload, Moon, Sun, Trash2, Lock, ShieldCheck, Cloud, RefreshCw, ArrowUpCircle } from 'lucide-react';
 import { Header } from '@/components/layout/header';
 import { useUIStore } from '@/store/ui-store';
 import { useTaskStore } from '@/store/task-store';
 import { useRecurrenceStore } from '@/store/recurrence-store';
 import { useAuthStore } from '@/store/auth-store';
+import { useSync } from '@/components/sync-provider';
 import { cn } from '@/lib/cn';
 
 export default function SettingsPage() {
@@ -17,7 +18,24 @@ export default function SettingsPage() {
   const completions = useRecurrenceStore((s) => s.completions);
   const lock = useAuthStore((s) => s.lock);
 
+  const { isConfigured, isSyncing, lastSyncedAt, syncNow, pushLocalNow } = useSync();
+  const [syncFeedback, setSyncFeedback] = useState<string | null>(null);
+
   const [showDangerConfirm, setShowDangerConfirm] = useState(false);
+
+  const handleManualSync = async () => {
+    setSyncFeedback('Sincronizando con Supabase...');
+    await syncNow();
+    setSyncFeedback('¡Sincronizado correctamente!');
+    setTimeout(() => setSyncFeedback(null), 3000);
+  };
+
+  const handlePushLocal = async () => {
+    setSyncFeedback('Subiendo datos locales a la nube...');
+    await pushLocalNow();
+    setSyncFeedback('¡Datos locales subidos a Supabase con éxito!');
+    setTimeout(() => setSyncFeedback(null), 3500);
+  };
 
   const handleExport = () => {
     const data = {
@@ -186,6 +204,88 @@ export default function SettingsPage() {
                 <p className="text-2xl font-bold">{rules.length}</p>
                 <p className="text-xs text-[var(--muted-foreground)] mt-1">Recurrentes</p>
               </div>
+            </div>
+          </section>
+
+          {/* Sincronización en la Nube (Supabase) */}
+          <section>
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)] mb-4">
+              Sincronización en la Nube
+            </h3>
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 space-y-4 shadow-xs">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div
+                    className={cn(
+                      'flex h-9 w-9 items-center justify-center rounded-lg transition-colors',
+                      isConfigured
+                        ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                        : 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
+                    )}
+                  >
+                    <Cloud className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-medium text-[var(--foreground)]">
+                        {isConfigured ? 'Supabase Conectado' : 'Modo Local'}
+                      </p>
+                      <span
+                        className={cn(
+                          'inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold',
+                          isConfigured
+                            ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20'
+                            : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20'
+                        )}
+                      >
+                        {isConfigured ? 'Tiempo Real' : 'Sin Nube'}
+                      </span>
+                    </div>
+                    <p className="text-xs text-[var(--muted-foreground)] mt-0.5">
+                      {isConfigured
+                        ? lastSyncedAt
+                          ? `Última sincronización: ${lastSyncedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`
+                          : 'Listo para sincronizar móvil y portátil'
+                        : 'Configura las claves de Supabase para sincronizar con tu móvil.'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {syncFeedback && (
+                <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400 animate-fade-in bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-2.5">
+                  {syncFeedback}
+                </p>
+              )}
+
+              {isConfigured ? (
+                <div className="flex flex-col sm:flex-row gap-2 pt-1 border-t border-[var(--border)]">
+                  <button
+                    type="button"
+                    disabled={isSyncing}
+                    onClick={handleManualSync}
+                    className="flex-1 flex items-center justify-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-xs font-medium text-[var(--foreground)] hover:bg-[var(--accent)] transition-default disabled:opacity-50 cursor-pointer"
+                  >
+                    <RefreshCw className={cn('h-3.5 w-3.5', isSyncing && 'animate-spin')} />
+                    <span>{isSyncing ? 'Sincronizando...' : 'Sincronizar ahora'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    disabled={isSyncing}
+                    onClick={handlePushLocal}
+                    className="flex-1 flex items-center justify-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-xs font-medium text-[var(--foreground)] hover:bg-[var(--accent)] transition-default disabled:opacity-50 cursor-pointer"
+                    title="Subir todos los datos locales actuales a la nube de Supabase"
+                  >
+                    <ArrowUpCircle className="h-3.5 w-3.5 text-blue-500" />
+                    <span>Subir datos a la nube</span>
+                  </button>
+                </div>
+              ) : (
+                <p className="text-[11px] text-[var(--muted-foreground)] leading-relaxed bg-[var(--background)] p-3 rounded-lg border border-[var(--border)]">
+                  💡 Para activar la sincronización, añade tus claves <code className="font-mono text-[var(--foreground)]">NEXT_PUBLIC_SUPABASE_URL</code> y <code className="font-mono text-[var(--foreground)]">NEXT_PUBLIC_SUPABASE_ANON_KEY</code> en tu archivo <code className="font-mono text-[var(--foreground)]">.env.local</code> y en Vercel.
+                </p>
+              )}
             </div>
           </section>
 

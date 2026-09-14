@@ -4,6 +4,12 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Project, ProjectGoal } from '@/types';
 import { generateId } from '@/lib/recurrence-engine';
+import {
+  saveProjectToCloud,
+  deleteProjectFromCloud,
+  saveGoalToCloud,
+  deleteGoalFromCloud,
+} from '@/lib/sync-engine';
 
 export const PROJECT_COLORS = [
   { label: 'Azul', value: '#3b82f6', bgClass: 'bg-blue-500/15 text-blue-600 dark:text-blue-400 border-blue-500/30' },
@@ -47,25 +53,15 @@ const DEFAULT_GOALS: ProjectGoal[] = [
   {
     id: 'goal-w1',
     projectId: 'proj-web',
-    title: 'Diseñar arquitectura de componentes e interfaces',
-    description: 'Definir tokens de diseño, sistema visual y maquetación responsiva.',
-    status: 'completed',
-    priority: 'alta',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: 'goal-w2',
-    projectId: 'proj-web',
-    title: 'Separación de espacio Agenda vs Roadmap de Proyectos',
-    description: 'Las metas del proyecto forman el roadmap estratégico; las subtareas diarias se ejecutan en la agenda.',
+    title: 'Finalizar arquitectura de almacenamiento y sincronización',
+    description: 'Asegurar consistencia de datos y respuesta offline.',
     status: 'in_progress',
     priority: 'alta',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   },
   {
-    id: 'goal-w3',
+    id: 'goal-w2',
     projectId: 'proj-web',
     title: 'Lanzar y verificar despliegue en producción',
     description: 'Configurar variables de entorno y validar dominio en Vercel.',
@@ -129,17 +125,24 @@ export const useProjectStore = create<ProjectState>()(
         set((state) => ({
           projects: [...state.projects, newProject],
         }));
+        saveProjectToCloud(newProject);
         return newProject;
       },
 
       updateProject: (id, updates) => {
+        let updatedProject: Project | undefined;
         set((state) => ({
-          projects: state.projects.map((p) =>
-            p.id === id
-              ? { ...p, ...updates, updatedAt: new Date().toISOString() }
-              : p
-          ),
+          projects: state.projects.map((p) => {
+            if (p.id === id) {
+              updatedProject = { ...p, ...updates, updatedAt: new Date().toISOString() };
+              return updatedProject;
+            }
+            return p;
+          }),
         }));
+        if (updatedProject) {
+          saveProjectToCloud(updatedProject);
+        }
       },
 
       deleteProject: (id) => {
@@ -147,6 +150,7 @@ export const useProjectStore = create<ProjectState>()(
           projects: state.projects.filter((p) => p.id !== id),
           goals: state.goals.filter((g) => g.projectId !== id),
         }));
+        deleteProjectFromCloud(id);
       },
 
       getProjectById: (id) => {
@@ -165,23 +169,31 @@ export const useProjectStore = create<ProjectState>()(
         set((state) => ({
           goals: [...(state.goals || []), newGoal],
         }));
+        saveGoalToCloud(newGoal);
         return newGoal;
       },
 
       updateGoal: (id, updates) => {
+        let updatedGoal: ProjectGoal | undefined;
         set((state) => ({
-          goals: (state.goals || []).map((g) =>
-            g.id === id
-              ? { ...g, ...updates, updatedAt: new Date().toISOString() }
-              : g
-          ),
+          goals: (state.goals || []).map((g) => {
+            if (g.id === id) {
+              updatedGoal = { ...g, ...updates, updatedAt: new Date().toISOString() };
+              return updatedGoal;
+            }
+            return g;
+          }),
         }));
+        if (updatedGoal) {
+          saveGoalToCloud(updatedGoal);
+        }
       },
 
       deleteGoal: (id) => {
         set((state) => ({
           goals: (state.goals || []).filter((g) => g.id !== id),
         }));
+        deleteGoalFromCloud(id);
       },
 
       getGoalsByProjectId: (projectId) => {
