@@ -16,10 +16,10 @@ export function MainContent({ children }: { children: React.ReactNode }) {
   return (
     <main
       className={cn(
-        'flex-1 transition-all duration-300 ease-in-out min-h-screen',
+        'flex-1 transition-all duration-300 ease-in-out min-h-screen pb-20 md:pb-0 ml-0',
         sidebarOpen
-          ? 'ml-[var(--sidebar-width)]'
-          : 'ml-[var(--sidebar-width-collapsed)]'
+          ? 'md:ml-[var(--sidebar-width)]'
+          : 'md:ml-[var(--sidebar-width-collapsed)]'
       )}
     >
       {children}

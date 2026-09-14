@@ -55,7 +55,7 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        'fixed left-0 top-0 z-40 h-screen border-r border-[var(--border)] bg-[var(--background)] transition-all duration-300 ease-in-out flex flex-col select-none',
+        'hidden md:flex fixed left-0 top-0 z-40 h-screen border-r border-[var(--border)] bg-[var(--background)] transition-all duration-300 ease-in-out flex-col select-none',
         sidebarOpen ? 'w-[var(--sidebar-width)]' : 'w-[var(--sidebar-width-collapsed)]'
       )}
     >

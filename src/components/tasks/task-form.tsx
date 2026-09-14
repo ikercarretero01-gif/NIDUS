@@ -89,8 +89,11 @@ export function TaskForm({ task, date, onClose }: TaskFormProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm animate-fade-in">
-      <div className="w-full max-w-md rounded-xl border border-[var(--border)] bg-[var(--background)] p-6 shadow-2xl animate-fade-in">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-xs animate-fade-in p-0 sm:p-4">
+      <div className="w-full max-w-lg rounded-t-3xl sm:rounded-2xl border border-[var(--border)] bg-[var(--background)] p-5 sm:p-6 shadow-2xl animate-fade-in max-h-[92vh] overflow-y-auto pb-[max(1.5rem,env(safe-area-inset-bottom))]">
+        {/* Barra táctil de agarre para móvil */}
+        <div className="mx-auto -mt-1 mb-4 h-1.5 w-12 rounded-full bg-zinc-300 dark:bg-zinc-700 sm:hidden" />
+
         {/* Header */}
         <div className="flex items-center justify-between mb-5">
           <h3 className="text-base font-semibold">
