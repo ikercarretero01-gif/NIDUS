@@ -159,12 +159,12 @@ export function Gatekeeper({ children }: GatekeeperProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col items-center justify-between bg-[var(--background)] text-[var(--foreground)] px-4 py-8 select-none overscroll-none overflow-hidden">
+    <div className="fixed inset-0 z-50 flex flex-col items-center justify-between bg-[var(--background)] text-[var(--foreground)] px-4 pt-[max(2rem,calc(env(safe-area-inset-top)+1rem))] pb-[max(1.5rem,env(safe-area-inset-bottom))] select-none overscroll-none overflow-hidden">
       {/* Luz ambiental de fondo tipo iOS */}
       <div className="pointer-events-none absolute top-10 left-1/2 -translate-x-1/2 h-72 w-72 rounded-full bg-amber-500/10 dark:bg-amber-400/5 blur-3xl" />
 
       {/* Cabecera / Identidad */}
-      <header className="flex flex-col items-center text-center pt-4 sm:pt-8 relative z-10 animate-fade-in">
+      <header className="flex flex-col items-center text-center pt-1 sm:pt-4 relative z-10 animate-fade-in">
         <div className="relative mb-3">
           <img
             src="/logo.png"

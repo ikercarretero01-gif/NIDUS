@@ -14,7 +14,7 @@ export function Header({ title, subtitle, children }: HeaderProps) {
   const formattedDate = format(today, "EEEE, d 'de' MMMM", { locale: es });
 
   return (
-    <header className="flex min-h-14 items-center justify-between border-b border-[var(--border)] px-4 sm:px-8 py-2.5 bg-[var(--background)]/80 backdrop-blur-md sticky top-0 z-30 transition-default">
+    <header className="flex min-h-14 items-center justify-between border-b border-[var(--border)] px-4 sm:px-8 pb-2.5 pt-[max(0.75rem,calc(env(safe-area-inset-top)+0.5rem))] sm:py-2.5 bg-[var(--background)]/85 backdrop-blur-md sticky top-0 z-30 transition-default">
       <div className="flex items-center gap-3">
         <div>
           <h2 className="text-base sm:text-lg font-semibold tracking-tight text-[var(--foreground)] capitalize">
