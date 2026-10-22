@@ -23,6 +23,7 @@ export type ProjectGoalStatus = 'todo' | 'in_progress' | 'completed';
 
 export interface ProjectGoal {
   id: string;
+  userId?: string;
   projectId: string;
   title: string;
   description?: string;
@@ -35,6 +36,7 @@ export interface ProjectGoal {
 
 export interface Project {
   id: string;
+  userId?: string;
   name: string;
   description?: string;
   color: string;          // Hex / color token (ej: '#3b82f6', '#10b981', etc.)

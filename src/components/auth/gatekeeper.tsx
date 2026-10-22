@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useTransition } from 'react';
 import { usePathname } from 'next/navigation';
 import {
   Mail,
@@ -10,6 +10,8 @@ import {
   Delete,
   X,
   Lock,
+  AlertCircle,
+  Loader2,
 } from 'lucide-react';
 import { useAuthStore } from '@/store/auth-store';
 import { cn } from '@/lib/cn';
@@ -35,28 +37,21 @@ export function Gatekeeper({ children }: GatekeeperProps) {
   const isPublicRoute = pathname === '/web' || pathname?.startsWith('/web');
 
   const [mounted, setMounted] = useState(false);
-  const [isClientAuth, setIsClientAuth] = useState(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const stored = localStorage.getItem('nidus-auth');
-        if (stored) {
-          const parsed = JSON.parse(stored);
-          return parsed.state?.isAuthenticated === true;
-        }
-      } catch {}
-    }
-    return false;
-  });
-
   const [pinDigits, setPinDigits] = useState<string[]>([]);
   const [isError, setIsError] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [showVisitorInfo, setShowVisitorInfo] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [isSubmitting, startTransition] = useTransition();
 
-  const storeAuth = useAuthStore((s) => s.isAuthenticated);
-  const isAuthenticated = isClientAuth || storeAuth;
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const isLoading = useAuthStore((s) => s.isLoading);
+  const errorMessage = useAuthStore((s) => s.errorMessage);
   const unlock = useAuthStore((s) => s.unlock);
+  const checkSession = useAuthStore((s) => s.checkSession);
+
+  // Email de contacto configurable para instancias públicas o privadas
+  const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'contacto@nidus.app';
 
   const triggerHaptic = (pattern: number | number[] = 10) => {
     if (typeof window !== 'undefined' && 'vibrate' in navigator) {
@@ -66,9 +61,15 @@ export function Gatekeeper({ children }: GatekeeperProps) {
     }
   };
 
+  // Verificar sesión activa contra el servidor en el montaje
+  useEffect(() => {
+    setMounted(true);
+    checkSession();
+  }, [checkSession]);
+
   const handleDigitPress = useCallback(
     (digit: string) => {
-      if (pinDigits.length >= 4 || isError || isSuccess) return;
+      if (pinDigits.length >= 4 || isError || isSuccess || isSubmitting) return;
 
       triggerHaptic(12);
       const nextDigits = [...pinDigits, digit];
@@ -76,43 +77,43 @@ export function Gatekeeper({ children }: GatekeeperProps) {
 
       if (nextDigits.length === 4) {
         const fullPin = nextDigits.join('');
-        const success = unlock(fullPin);
+        startTransition(async () => {
+          const res = await unlock(fullPin);
 
-        if (success) {
-          setIsSuccess(true);
-          triggerHaptic([20, 30]);
-          setTimeout(() => {
-            setIsClientAuth(true);
-          }, 300);
-        } else {
-          setIsError(true);
-          triggerHaptic([40, 50, 40]);
-          setTimeout(() => {
-            setPinDigits([]);
-            setIsError(false);
-          }, 500);
-        }
+          if (res.success) {
+            setIsSuccess(true);
+            triggerHaptic([20, 30]);
+          } else {
+            setIsError(true);
+            triggerHaptic([40, 50, 40]);
+            setTimeout(() => {
+              setPinDigits([]);
+              setIsError(false);
+            }, 600);
+          }
+        });
       }
     },
-    [pinDigits, isError, isSuccess, unlock]
+    [pinDigits, isError, isSuccess, isSubmitting, unlock]
   );
 
   const handleBackspace = useCallback(() => {
-    if (pinDigits.length === 0 || isError || isSuccess) return;
+    if (pinDigits.length === 0 || isError || isSuccess || isSubmitting) return;
     triggerHaptic(8);
     setPinDigits((prev) => prev.slice(0, -1));
-  }, [pinDigits, isError, isSuccess]);
+  }, [pinDigits, isError, isSuccess, isSubmitting]);
 
   const handleClear = useCallback(() => {
+    if (isSubmitting) return;
     triggerHaptic(8);
     setPinDigits([]);
     setIsError(false);
-  }, []);
+  }, [isSubmitting]);
 
   // Escuchar teclado físico para ordenadores y portátiles
   useEffect(() => {
     const handlePhysicalKeyDown = (e: KeyboardEvent) => {
-      if (isAuthenticated || isPublicRoute) return;
+      if (isAuthenticated || isPublicRoute || isSubmitting) return;
 
       if (e.key >= '0' && e.key <= '9') {
         e.preventDefault();
@@ -128,34 +129,30 @@ export function Gatekeeper({ children }: GatekeeperProps) {
 
     window.addEventListener('keydown', handlePhysicalKeyDown);
     return () => window.removeEventListener('keydown', handlePhysicalKeyDown);
-  }, [isAuthenticated, isPublicRoute, handleDigitPress, handleBackspace, handleClear]);
-
-  useEffect(() => {
-    setMounted(true);
-    if (storeAuth) {
-      setIsClientAuth(true);
-    }
-  }, [storeAuth]);
+  }, [isAuthenticated, isPublicRoute, isSubmitting, handleDigitPress, handleBackspace, handleClear]);
 
   const handleCopyEmail = () => {
-    navigator.clipboard.writeText('ikercarretero01@gmail.com');
+    navigator.clipboard.writeText(contactEmail);
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
   };
 
-  const gmailWebUrl =
-    'https://mail.google.com/mail/?view=cm&fs=1&to=ikercarretero01@gmail.com&su=Solicitud%20de%20acceso%20a%20Nidus&body=Hola%20Iker,%20me%20gustar%C3%ADa%20solicitar%20acceso%20a%20tu%20instancia%20privada%20de%20Nidus.';
+  const encodedEmail = encodeURIComponent(contactEmail);
+  const gmailWebUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodedEmail}&su=Solicitud%20de%20acceso%20a%20Nidus&body=Hola,%20me%20gustar%C3%ADa%20solicitar%20acceso%20a%20tu%20instancia%20de%20Nidus.`;
+  const mailtoUrl = `mailto:${contactEmail}?subject=Solicitud%20de%20acceso%20a%20Nidus&body=Hola,%20me%20gustar%C3%ADa%20solicitar%20acceso%20a%20tu%20instancia%20de%20Nidus.`;
 
-  const mailtoUrl =
-    'mailto:ikercarretero01@gmail.com?subject=Solicitud%20de%20acceso%20a%20Nidus&body=Hola%20Iker,%20me%20gustar%C3%ADa%20solicitar%20acceso%20a%20tu%20instancia%20privada%20de%20Nidus.';
-
-  // Si es ruta pública (/web) o está autenticado, renderizar sin pantalla de bloqueo
+  // Rutas públicas (/web) o usuario autenticado
   if (isPublicRoute || isAuthenticated) {
     return <>{children}</>;
   }
 
-  if (!mounted) {
-    return null;
+  // Prevenir parpadeos mientras se inicializa en el cliente
+  if (!mounted || isLoading) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--background)]">
+        <Loader2 className="h-6 w-6 animate-spin text-[var(--muted-foreground)]" />
+      </div>
+    );
   }
 
   return (
@@ -184,31 +181,47 @@ export function Gatekeeper({ children }: GatekeeperProps) {
         </p>
       </header>
 
-      {/* Indicadores de PIN (4 puntos nativos) */}
-      <div
-        className={cn(
-          'flex items-center justify-center gap-4 my-auto relative z-10 transition-transform duration-200',
-          isError && 'animate-shake'
+      {/* Feedback de error o estado de validación */}
+      <div className="flex flex-col items-center gap-2 relative z-10 my-auto">
+        <div
+          className={cn(
+            'flex items-center justify-center gap-4 transition-transform duration-200',
+            isError && 'animate-shake'
+          )}
+        >
+          {[0, 1, 2, 3].map((idx) => {
+            const isFilled = pinDigits.length > idx;
+            return (
+              <div
+                key={idx}
+                className={cn(
+                  'h-3.5 w-3.5 sm:h-4 sm:w-4 rounded-full border-2 transition-all duration-200',
+                  isError
+                    ? 'border-red-500 bg-red-500 shadow-sm shadow-red-500/30'
+                    : isSuccess
+                    ? 'border-emerald-500 bg-emerald-500 scale-125 shadow-sm shadow-emerald-500/30'
+                    : isFilled
+                    ? 'border-[var(--foreground)] bg-[var(--foreground)] scale-115 shadow-xs'
+                    : 'border-[var(--border)] bg-[var(--card)]'
+                )}
+              />
+            );
+          })}
+        </div>
+
+        {isSubmitting && (
+          <div className="flex items-center gap-1.5 text-xs text-[var(--muted-foreground)] animate-fade-in pt-2">
+            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            <span>Validando sesión segura...</span>
+          </div>
         )}
-      >
-        {[0, 1, 2, 3].map((idx) => {
-          const isFilled = pinDigits.length > idx;
-          return (
-            <div
-              key={idx}
-              className={cn(
-                'h-3.5 w-3.5 sm:h-4 sm:w-4 rounded-full border-2 transition-all duration-200',
-                isError
-                  ? 'border-red-500 bg-red-500 shadow-sm shadow-red-500/30'
-                  : isSuccess
-                  ? 'border-emerald-500 bg-emerald-500 scale-125 shadow-sm shadow-emerald-500/30'
-                  : isFilled
-                  ? 'border-[var(--foreground)] bg-[var(--foreground)] scale-115 shadow-xs'
-                  : 'border-[var(--border)] bg-[var(--card)]'
-              )}
-            />
-          );
-        })}
+
+        {errorMessage && !isSubmitting && isError && (
+          <div className="flex items-center gap-1.5 text-xs text-red-500 animate-fade-in pt-2">
+            <AlertCircle className="h-3.5 w-3.5" />
+            <span>{errorMessage}</span>
+          </div>
+        )}
       </div>
 
       {/* Teclado numérico nativo incorporado (Numpad) */}
@@ -218,8 +231,9 @@ export function Gatekeeper({ children }: GatekeeperProps) {
             <button
               key={item.digit}
               type="button"
+              disabled={isSubmitting}
               onClick={() => handleDigitPress(item.digit)}
-              className="h-16 w-16 sm:h-18 sm:w-18 rounded-full border border-[var(--border)]/80 bg-[var(--card)]/90 backdrop-blur-md text-[var(--foreground)] hover:bg-[var(--accent)] active:bg-[var(--foreground)] active:text-[var(--background)] active:scale-90 transition-all duration-150 flex flex-col items-center justify-center cursor-pointer shadow-xs select-none touch-manipulation"
+              className="h-16 w-16 sm:h-18 sm:w-18 rounded-full border border-[var(--border)]/80 bg-[var(--card)]/90 backdrop-blur-md text-[var(--foreground)] hover:bg-[var(--accent)] active:bg-[var(--foreground)] active:text-[var(--background)] active:scale-90 transition-all duration-150 flex flex-col items-center justify-center cursor-pointer shadow-xs select-none touch-manipulation disabled:opacity-50"
             >
               <span className="text-2xl font-semibold leading-none">{item.digit}</span>
               {item.letters && (
@@ -233,8 +247,9 @@ export function Gatekeeper({ children }: GatekeeperProps) {
           {/* Botón Limpiar */}
           <button
             type="button"
+            disabled={isSubmitting}
             onClick={handleClear}
-            className="h-16 w-16 sm:h-18 sm:w-18 rounded-full text-xs font-semibold text-[var(--muted-foreground)] hover:text-[var(--foreground)] active:scale-90 transition-all duration-150 flex items-center justify-center cursor-pointer select-none"
+            className="h-16 w-16 sm:h-18 sm:w-18 rounded-full text-xs font-semibold text-[var(--muted-foreground)] hover:text-[var(--foreground)] active:scale-90 transition-all duration-150 flex items-center justify-center cursor-pointer select-none disabled:opacity-50"
           >
             {pinDigits.length > 0 ? 'Limpiar' : ''}
           </button>
@@ -242,8 +257,9 @@ export function Gatekeeper({ children }: GatekeeperProps) {
           {/* Dígito 0 */}
           <button
             type="button"
+            disabled={isSubmitting}
             onClick={() => handleDigitPress('0')}
-            className="h-16 w-16 sm:h-18 sm:w-18 rounded-full border border-[var(--border)]/80 bg-[var(--card)]/90 backdrop-blur-md text-[var(--foreground)] hover:bg-[var(--accent)] active:bg-[var(--foreground)] active:text-[var(--background)] active:scale-90 transition-all duration-150 flex flex-col items-center justify-center cursor-pointer shadow-xs select-none touch-manipulation"
+            className="h-16 w-16 sm:h-18 sm:w-18 rounded-full border border-[var(--border)]/80 bg-[var(--card)]/90 backdrop-blur-md text-[var(--foreground)] hover:bg-[var(--accent)] active:bg-[var(--foreground)] active:text-[var(--background)] active:scale-90 transition-all duration-150 flex flex-col items-center justify-center cursor-pointer shadow-xs select-none touch-manipulation disabled:opacity-50"
           >
             <span className="text-2xl font-semibold leading-none">0</span>
           </button>
@@ -251,9 +267,10 @@ export function Gatekeeper({ children }: GatekeeperProps) {
           {/* Botón Borrar (Backspace) */}
           <button
             type="button"
+            disabled={isSubmitting}
             onClick={handleBackspace}
             aria-label="Borrar último dígito"
-            className="h-16 w-16 sm:h-18 sm:w-18 rounded-full text-[var(--muted-foreground)] hover:text-[var(--foreground)] active:scale-90 transition-all duration-150 flex items-center justify-center cursor-pointer select-none"
+            className="h-16 w-16 sm:h-18 sm:w-18 rounded-full text-[var(--muted-foreground)] hover:text-[var(--foreground)] active:scale-90 transition-all duration-150 flex items-center justify-center cursor-pointer select-none disabled:opacity-50"
           >
             {pinDigits.length > 0 && <Delete className="h-6 w-6 stroke-[1.8]" />}
           </button>
@@ -293,15 +310,15 @@ export function Gatekeeper({ children }: GatekeeperProps) {
             </div>
 
             <p className="text-xs text-[var(--muted-foreground)] leading-relaxed">
-              Esta instancia de Nidus es personal para su propietario Iker Carretero. Para solicitar una invitación o credenciales, envía un correo a:
+              Esta instancia de Nidus está protegida para su propietario. Para solicitar una invitación o credenciales, envía un correo a:
             </p>
 
             <div className="flex items-center justify-between p-3 rounded-xl border border-[var(--border)] bg-[var(--card)] font-mono text-xs">
-              <span>ikercarretero01@gmail.com</span>
+              <span className="truncate pr-2">{contactEmail}</span>
               <button
                 type="button"
                 onClick={handleCopyEmail}
-                className="flex items-center gap-1 text-xs font-sans text-amber-600 dark:text-amber-400 cursor-pointer"
+                className="flex items-center gap-1 text-xs font-sans text-amber-600 dark:text-amber-400 cursor-pointer shrink-0"
               >
                 {copied ? <Check className="h-3.5 w-3.5 text-emerald-500" /> : <Copy className="h-3.5 w-3.5" />}
                 <span>{copied ? 'Copiado' : 'Copiar'}</span>

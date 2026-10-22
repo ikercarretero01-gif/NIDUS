@@ -6,6 +6,7 @@
 -- 1. Tabla de Proyectos
 CREATE TABLE IF NOT EXISTS public.projects (
   id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL DEFAULT 'local-user',
   name TEXT NOT NULL,
   description TEXT DEFAULT '',
   color TEXT NOT NULL DEFAULT '#3b82f6',
@@ -14,9 +15,13 @@ CREATE TABLE IF NOT EXISTS public.projects (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+-- Asegurar que la columna user_id exista si la tabla ya había sido creada previamente
+ALTER TABLE public.projects ADD COLUMN IF NOT EXISTS user_id TEXT NOT NULL DEFAULT 'local-user';
+
 -- 2. Tabla de Metas de Proyectos (Roadmap)
 CREATE TABLE IF NOT EXISTS public.project_goals (
   id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL DEFAULT 'local-user',
   project_id TEXT NOT NULL REFERENCES public.projects(id) ON DELETE CASCADE,
   title TEXT NOT NULL,
   description TEXT DEFAULT '',
@@ -26,6 +31,8 @@ CREATE TABLE IF NOT EXISTS public.project_goals (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+ALTER TABLE public.project_goals ADD COLUMN IF NOT EXISTS user_id TEXT NOT NULL DEFAULT 'local-user';
 
 -- 3. Tabla de Tareas
 CREATE TABLE IF NOT EXISTS public.tasks (
@@ -72,8 +79,15 @@ CREATE TABLE IF NOT EXISTS public.recurrence_completions (
   completed_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+-- Índices de alto rendimiento para consultas filtradas por usuario
+CREATE INDEX IF NOT EXISTS idx_projects_user ON public.projects(user_id);
+CREATE INDEX IF NOT EXISTS idx_project_goals_user ON public.project_goals(user_id);
+CREATE INDEX IF NOT EXISTS idx_tasks_user ON public.tasks(user_id);
+CREATE INDEX IF NOT EXISTS idx_recurrence_rules_user ON public.recurrence_rules(user_id);
+CREATE INDEX IF NOT EXISTS idx_recurrence_completions_user ON public.recurrence_completions(user_id);
+
 -- ==============================================================================
--- POLÍTICAS DE ACCESO (Permitir lectura y escritura con la anon key)
+-- ROW LEVEL SECURITY (RLS): AISLAMIENTO ESTRICTO DE DATOS
 -- ==============================================================================
 ALTER TABLE public.projects ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.project_goals ENABLE ROW LEVEL SECURITY;
@@ -81,27 +95,94 @@ ALTER TABLE public.tasks ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.recurrence_rules ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.recurrence_completions ENABLE ROW LEVEL SECURITY;
 
-DO $$ 
-BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Anon all projects') THEN
-    CREATE POLICY "Anon all projects" ON public.projects FOR ALL USING (true) WITH CHECK (true);
-  END IF;
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Anon all project_goals') THEN
-    CREATE POLICY "Anon all project_goals" ON public.project_goals FOR ALL USING (true) WITH CHECK (true);
-  END IF;
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Anon all tasks') THEN
-    CREATE POLICY "Anon all tasks" ON public.tasks FOR ALL USING (true) WITH CHECK (true);
-  END IF;
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Anon all recurrence_rules') THEN
-    CREATE POLICY "Anon all recurrence_rules" ON public.recurrence_rules FOR ALL USING (true) WITH CHECK (true);
-  END IF;
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Anon all recurrence_completions') THEN
-    CREATE POLICY "Anon all recurrence_completions" ON public.recurrence_completions FOR ALL USING (true) WITH CHECK (true);
-  END IF;
-END $$;
+-- 1. ELIMINAR POLÍTICAS OBSOLETAS O ANÓNIMAS ABIERTAS (Mitigación de vulnerabilidad)
+DROP POLICY IF EXISTS "Anon all projects" ON public.projects;
+DROP POLICY IF EXISTS "Anon all project_goals" ON public.project_goals;
+DROP POLICY IF EXISTS "Anon all tasks" ON public.tasks;
+DROP POLICY IF EXISTS "Anon all recurrence_rules" ON public.recurrence_rules;
+DROP POLICY IF EXISTS "Anon all recurrence_completions" ON public.recurrence_completions;
+
+DROP POLICY IF EXISTS "Users own projects" ON public.projects;
+DROP POLICY IF EXISTS "Users own project_goals" ON public.project_goals;
+DROP POLICY IF EXISTS "Users own tasks" ON public.tasks;
+DROP POLICY IF EXISTS "Users own recurrence_rules" ON public.recurrence_rules;
+DROP POLICY IF EXISTS "Users own recurrence_completions" ON public.recurrence_completions;
+
+-- 2. CREACIÓN DE POLÍTICAS RLS SEGURAS
+-- Cada usuario solo puede consultar y mutar sus propias filas (auth.uid() = user_id)
+-- o cuando se accede vía service_role / token de propietario verificado.
+CREATE POLICY "Users own projects"
+  ON public.projects
+  FOR ALL
+  USING (
+    (auth.uid() IS NOT NULL AND auth.uid()::text = user_id)
+    OR auth.role() = 'service_role'
+    OR (auth.jwt() ->> 'sub') = user_id
+  )
+  WITH CHECK (
+    (auth.uid() IS NOT NULL AND auth.uid()::text = user_id)
+    OR auth.role() = 'service_role'
+    OR (auth.jwt() ->> 'sub') = user_id
+  );
+
+CREATE POLICY "Users own project_goals"
+  ON public.project_goals
+  FOR ALL
+  USING (
+    (auth.uid() IS NOT NULL AND auth.uid()::text = user_id)
+    OR auth.role() = 'service_role'
+    OR (auth.jwt() ->> 'sub') = user_id
+  )
+  WITH CHECK (
+    (auth.uid() IS NOT NULL AND auth.uid()::text = user_id)
+    OR auth.role() = 'service_role'
+    OR (auth.jwt() ->> 'sub') = user_id
+  );
+
+CREATE POLICY "Users own tasks"
+  ON public.tasks
+  FOR ALL
+  USING (
+    (auth.uid() IS NOT NULL AND auth.uid()::text = user_id)
+    OR auth.role() = 'service_role'
+    OR (auth.jwt() ->> 'sub') = user_id
+  )
+  WITH CHECK (
+    (auth.uid() IS NOT NULL AND auth.uid()::text = user_id)
+    OR auth.role() = 'service_role'
+    OR (auth.jwt() ->> 'sub') = user_id
+  );
+
+CREATE POLICY "Users own recurrence_rules"
+  ON public.recurrence_rules
+  FOR ALL
+  USING (
+    (auth.uid() IS NOT NULL AND auth.uid()::text = user_id)
+    OR auth.role() = 'service_role'
+    OR (auth.jwt() ->> 'sub') = user_id
+  )
+  WITH CHECK (
+    (auth.uid() IS NOT NULL AND auth.uid()::text = user_id)
+    OR auth.role() = 'service_role'
+    OR (auth.jwt() ->> 'sub') = user_id
+  );
+
+CREATE POLICY "Users own recurrence_completions"
+  ON public.recurrence_completions
+  FOR ALL
+  USING (
+    (auth.uid() IS NOT NULL AND auth.uid()::text = user_id)
+    OR auth.role() = 'service_role'
+    OR (auth.jwt() ->> 'sub') = user_id
+  )
+  WITH CHECK (
+    (auth.uid() IS NOT NULL AND auth.uid()::text = user_id)
+    OR auth.role() = 'service_role'
+    OR (auth.jwt() ->> 'sub') = user_id
+  );
 
 -- ==============================================================================
--- HABILITAR REALTIME (Para sincronización instantánea entre móvil y portátil)
+-- HABILITAR REALTIME (Sincronización instantánea filtrada por usuario)
 -- ==============================================================================
 DO $$
 BEGIN

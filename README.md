@@ -14,7 +14,7 @@
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript" alt="TypeScript" />
   <img src="https://img.shields.io/badge/Tailwind-3.4-38B2AC?style=flat-square&logo=tailwind-css" alt="Tailwind CSS" />
   <img src="https://img.shields.io/badge/State-Zustand-orange?style=flat-square" alt="Zustand" />
-  <img src="https://img.shields.io/badge/Licencia-Open%20Source-green?style=flat-square" alt="Licencia" />
+  <a href="./LICENSE"><img src="https://img.shields.io/badge/Licencia-MIT-green?style=flat-square" alt="Licencia MIT" /></a>
 </p>
 
 <p align="center">
@@ -64,8 +64,29 @@ Alterna con un clic entre la ejecución del día a día, la perspectiva semanal 
 ### Separación Inteligente: Agenda Diaria vs Roadmap de Proyectos
 A menudo las herramientas mezclan las tareas operativas de hoy con los hitos estratégicos a largo plazo, saturando la vista diaria. En Nidus, los proyectos cuentan con su propio **Tablero de Roadmap Visual** organizado en metas por fases (*Por Empezar*, *En Curso*, *Conseguidas*). Las metas del proyecto no ensucian tu agenda diaria: tú decides cuándo enviar una meta a tu día a día con el botón **«Hacer hoy»** o vincular tareas de tu jornada como subtareas de ejecución.
 
-### Local-First: Privacidad Absoluta y Cero Dependencias
-Tus notas, ideas y proyectos son tuyos. Nidus almacena tus datos directamente en tu propio dispositivo, ofreciendo una experiencia instantánea, sin tiempos de carga, sin rastreo y sin costes de suscripción.
+---
+
+## Arquitectura de Almacenamiento y Privacidad
+
+Nidus está diseñada bajo un modelo híbrido flexible según las necesidades de cada usuario:
+
+1. **Modo Local-First (Por defecto):**
+   - Tus datos se almacenan exclusivamente en el almacenamiento de tu propio navegador (`localStorage` reactivo mediante Zustand).
+   - Cero dependencias en la nube, funcionamiento offline instantáneo y privacidad absoluta en tu dispositivo.
+
+2. **Modo Sincronización en la Nube (Opcional con Supabase):**
+   - Si deseas sincronizar tu agenda en tiempo real entre múltiples dispositivos (por ejemplo, el móvil y el ordenador portátil), puedes configurar tu propia instancia de [Supabase](https://supabase.com).
+   - **Aislamiento por usuario:** Cada registro (`tasks`, `projects`, `project_goals`, `recurrence_rules`, `recurrence_completions`) cuenta con una clave `user_id`.
+   - **Seguridad en base de datos:** Se aplica **Row Level Security (RLS)** estricto en Supabase (`schema.sql`), impidiendo cualquier acceso no autorizado o lectura accidental entre diferentes usuarios.
+
+---
+
+## Seguridad y Control de Acceso
+
+- **Validación del PIN en Servidor:** El acceso como propietario se valida en el backend mediante Next.js API Routes (`/api/auth/unlock`), verificando el hash del PIN con algoritmos resistentes a ataques de temporización (`crypto.timingSafeEqual`).
+- **Sesiones Seguras:** Tras una autenticación exitosa, se emite una cookie segura con atributos `HttpOnly`, `SameSite=Lax` y firma criptográfica HMAC-SHA256. El PIN nunca se envía al cliente JavaScript ni se guarda en texto plano en el navegador.
+- **Protección contra Fuerza Bruta:** Limitación automática de intentos fallidos con retardo artificial e intervalos de enfriamiento para mitigar ataques automatizados.
+- **Variables Privadas:** El PIN (`APP_PIN`) y la clave de firma (`AUTH_SECRET`) permanecen estrictamente en variables de entorno del servidor, no visibles en el bundle público.
 
 ---
 
@@ -78,6 +99,7 @@ Tus notas, ideas y proyectos son tuyos. Nidus almacena tus datos directamente en
 | **Tipado** | TypeScript 5 | Tipos estrictos para tareas, prioridades y frecuencias |
 | **Estilos** | Tailwind CSS 3.4 | Sistema de diseño responsivo y tokens visuales |
 | **Estado Global** | Zustand 5 + Persist | Estado reactivo con sincronización local continua (`localStorage`) |
+| **Base de Datos** | Supabase (PostgreSQL + RLS) | Sincronización en tiempo real y persistencia segura en la nube (opcional) |
 | **Fechas** | date-fns 4 | Motor de cálculo de semanas, meses y recurrencias |
 | **Iconografía** | Lucide React | Iconos vectoriales limpios y minimalistas |
 | **Primitivas UI** | Radix UI | Componentes accesibles (Dialog, Popover, Select, Switch) |
@@ -91,20 +113,26 @@ nidus/
 ├── public/                  # Favicons, logo oficial, isotipo y manifest PWA
 ├── src/
 │   ├── app/                 # Rutas de la aplicación (Next.js App Router)
+│   │   ├── api/auth/        # Endpoints de autenticación segura (unlock, session, logout)
 │   │   ├── page.tsx         # Render directo de la agenda de hoy
 │   │   ├── today/           # Agenda diaria por bloques y tareas pendientes
 │   │   ├── week/            # Planificador semanal de 7 días
 │   │   ├── month/           # Calendario mensual interactivo
 │   │   ├── recurring/       # Gestor de rutinas y hábitos
-│   │   ├── projects/        # Gestión de proyectos personales y métricas
-│   │   └── settings/        # Configuración general y tema
+│   │   ├── projects/        # Gestión de proyectos personales y roadmap
+│   │   ├── settings/        # Configuración general, tema y estado de sesión
+│   │   └── web/             # Landing page de presentación pública
 │   ├── components/
+│   │   ├── auth/            # Gatekeeper con teclado PIN nativo móvil y sesión segura
 │   │   ├── layout/          # Barra lateral, cabeceras y tema
 │   │   ├── tasks/           # Formularios, tarjetas de tarea y modal de posponer
 │   │   └── ui/              # Componentes base e isotipo
-│   ├── lib/                 # Motor de recurrencia, fechas y utilidades
-│   ├── store/               # Stores de Zustand (tareas, rutinas, proyectos, ui)
+│   ├── lib/                 # Auth de servidor, sincronización Supabase, motor de recurrencia
+│   ├── store/               # Stores de Zustand (tareas, rutinas, proyectos, ui, auth)
 │   └── types/               # Tipos e interfaces globales de TypeScript
+├── supabase/
+│   └── schema.sql           # Esquema PostgreSQL con políticas RLS y suscripciones Realtime
+├── test/                    # Pruebas automatizadas de lógica crítica y seguridad
 ├── next.config.ts           # Configuración de Next.js
 ├── tailwind.config.ts       # Tokens y temas de diseño
 └── tsconfig.json            # Configuración estricta de TypeScript
@@ -122,29 +150,35 @@ cd NIDUS
 # 2. Instalar dependencias
 npm install
 
-# 3. Iniciar el servidor local
+# 3. Configurar variables de entorno
+cp .env.example .env.local
+# Edita .env.local y define tu APP_PIN de 4 dígitos
+
+# 4. Ejecutar pruebas automatizadas
+npm test
+
+# 5. Iniciar el servidor local
 npm run dev
 ```
 
 La aplicación se abrirá en [http://localhost:3000](http://localhost:3000).
 
-También puedes acceder a la versión en producción desplegada en Vercel:
-- **Web Oficial de Presentación:** [https://nidus-two.vercel.app/web](https://nidus-two.vercel.app/web)
-- **Aplicación / Agenda:** [https://nidus-two.vercel.app](https://nidus-two.vercel.app)
-
 ---
 
-## Adaptación a Proyectos Personales
+## Despliegue en Producción (Vercel)
 
-Nidus está construida con una arquitectura modular para que cualquier desarrollador pueda utilizarla como su propia agenda o adaptarla al flujo de trabajo de sus proyectos personales:
-
-- **Etiquetas y categorías:** Modifica las áreas de enfoque en `src/lib/constants.ts`.
-- **Franjas horarias:** Ajusta los bloques de mañana, tarde y noche según tus hábitos en `src/lib/recurrence-engine.ts`.
-- **Persistencia local:** Los datos no dependen de servicios de terceros ni bases de datos de pago; se guardan en el almacenamiento de tu navegador de manera segura e instantánea.
-- **Despliegue gratuito:** Listo para publicar en un clic en [Vercel](https://vercel.com/) con cero costes de mantenimiento.
+1. Sube tu copia del repositorio a GitHub.
+2. Importa el proyecto en [Vercel](https://vercel.com).
+3. Añade tus variables de entorno en **Project Settings -> Environment Variables**:
+   - `APP_PIN`: tu PIN de acceso de 4 dígitos.
+   - `AUTH_SECRET`: clave aleatoria para la firma de sesiones.
+   - *(Opcional)* `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_ANON_KEY` si utilizas sincronización en nube.
+4. Despliega con un clic.
 
 ---
 
 ## Licencia
 
-Desarrollado por **Iker Carretero**. Proyecto de código abierto para productividad personal.
+Distribuido bajo la Licencia MIT. Consulta el archivo [LICENSE](./LICENSE) para más detalles.
+
+Desarrollado con foco y dedicación por **Iker Carretero**.

@@ -1,7 +1,7 @@
 export const APP_NAME = 'Nidus';
 export const APP_DESCRIPTION = 'Tu espacio de productividad personal';
 
-export const DEFAULT_USER_ID = 'local-user';
+export const DEFAULT_USER_ID = process.env.NEXT_PUBLIC_USER_ID?.trim() || 'local-user';
 
 export const DAYS_OF_WEEK = [
   { value: 0, label: 'Dom', labelFull: 'Domingo' },

@@ -169,15 +169,15 @@ export default function SettingsPage() {
                       Propietario autenticado
                     </p>
                     <p className="text-xs text-[var(--muted-foreground)]">
-                      PIN activo: •••• (9891)
+                      Sesión segura activa (protegida en servidor)
                     </p>
                   </div>
                 </div>
                 <button
                   type="button"
-                  onClick={lock}
+                  onClick={() => lock()}
                   className="flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--accent)] px-3 py-1.5 text-xs font-medium text-[var(--foreground)] hover:bg-[var(--border)] transition-default cursor-pointer"
-                  title="Bloquear sesión y volver a la pantalla de acceso"
+                  title="Cerrar sesión y volver a la pantalla de acceso"
                 >
                   <Lock className="h-3.5 w-3.5" />
                   <span>Bloquear Nidus</span>

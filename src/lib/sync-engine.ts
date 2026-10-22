@@ -11,15 +11,32 @@ import type {
 import { useTaskStore } from '@/store/task-store';
 import { useProjectStore } from '@/store/project-store';
 import { useRecurrenceStore } from '@/store/recurrence-store';
+import { DEFAULT_USER_ID } from './constants';
+
+/**
+ * Obtiene el ID del usuario activo para aislar las consultas y sincronización.
+ */
+export function getActiveUserId(): string {
+  if (typeof window !== 'undefined') {
+    const envUserId = process.env.NEXT_PUBLIC_USER_ID?.trim();
+    if (envUserId) return envUserId;
+
+    try {
+      const stored = localStorage.getItem('nidus-user-id');
+      if (stored && stored.trim()) return stored.trim();
+    } catch {}
+  }
+  return DEFAULT_USER_ID;
+}
 
 // ==============================================================================
-// Mappers: TypeScript Models <-> Supabase DB Columns
+// Mappers: TypeScript Models <-> Supabase DB Columns (con aislamiento user_id)
 // ==============================================================================
 
 export function taskToDb(task: Task) {
   return {
     id: task.id,
-    user_id: task.userId || 'local-user',
+    user_id: task.userId || getActiveUserId(),
     title: task.title,
     notes: task.notes || '',
     date: task.date,
@@ -41,7 +58,7 @@ export function taskToDb(task: Task) {
 export function dbToTask(row: any): Task {
   return {
     id: row.id,
-    userId: row.user_id,
+    userId: row.user_id || getActiveUserId(),
     title: row.title,
     notes: row.notes || '',
     date: row.date,
@@ -62,6 +79,7 @@ export function dbToTask(row: any): Task {
 export function projectToDb(p: Project) {
   return {
     id: p.id,
+    user_id: p.userId || getActiveUserId(),
     name: p.name,
     description: p.description || '',
     color: p.color,
@@ -75,6 +93,7 @@ export function projectToDb(p: Project) {
 export function dbToProject(row: any): Project {
   return {
     id: row.id,
+    userId: row.user_id || getActiveUserId(),
     name: row.name,
     description: row.description || '',
     color: row.color,
@@ -87,6 +106,7 @@ export function dbToProject(row: any): Project {
 export function goalToDb(g: ProjectGoal) {
   return {
     id: g.id,
+    user_id: g.userId || getActiveUserId(),
     project_id: g.projectId,
     title: g.title,
     description: g.description || '',
@@ -102,6 +122,7 @@ export function goalToDb(g: ProjectGoal) {
 export function dbToGoal(row: any): ProjectGoal {
   return {
     id: row.id,
+    userId: row.user_id || getActiveUserId(),
     projectId: row.project_id,
     title: row.title,
     description: row.description || '',
@@ -116,7 +137,7 @@ export function dbToGoal(row: any): ProjectGoal {
 export function recurrenceRuleToDb(r: RecurrenceRule) {
   return {
     id: r.id,
-    user_id: r.userId || 'local-user',
+    user_id: r.userId || getActiveUserId(),
     task_template: r.taskTemplate,
     frequency: r.frequency,
     interval: r.interval,
@@ -134,7 +155,7 @@ export function recurrenceRuleToDb(r: RecurrenceRule) {
 export function dbToRecurrenceRule(row: any): RecurrenceRule {
   return {
     id: row.id,
-    userId: row.user_id,
+    userId: row.user_id || getActiveUserId(),
     taskTemplate: row.task_template,
     frequency: row.frequency,
     interval: row.interval,
@@ -151,7 +172,7 @@ export function dbToRecurrenceRule(row: any): RecurrenceRule {
 export function completionToDb(c: CompletionRecord) {
   return {
     id: c.id,
-    user_id: c.userId || 'local-user',
+    user_id: c.userId || getActiveUserId(),
     recurrence_rule_id: c.recurrenceRuleId,
     date: c.date,
     completed_at: c.completedAt,
@@ -162,7 +183,7 @@ export function completionToDb(c: CompletionRecord) {
 export function dbToCompletion(row: any): CompletionRecord {
   return {
     id: row.id,
-    userId: row.user_id,
+    userId: row.user_id || getActiveUserId(),
     recurrenceRuleId: row.recurrence_rule_id,
     date: row.date,
     completedAt: row.completed_at,
@@ -170,7 +191,7 @@ export function dbToCompletion(row: any): CompletionRecord {
 }
 
 // ==============================================================================
-// Cloud Operations: Helpers directos a Supabase
+// Cloud Operations: Helpers directos a Supabase con aislamiento de usuario
 // ==============================================================================
 
 export async function saveTaskToCloud(task: Task) {
@@ -185,7 +206,8 @@ export async function saveTaskToCloud(task: Task) {
 export async function deleteTaskFromCloud(id: string) {
   if (!supabase) return;
   try {
-    await supabase.from('tasks').delete().eq('id', id);
+    const currentUserId = getActiveUserId();
+    await supabase.from('tasks').delete().eq('id', id).eq('user_id', currentUserId);
   } catch (err) {
     console.error('Error al eliminar tarea en Supabase:', err);
   }
@@ -203,7 +225,8 @@ export async function saveProjectToCloud(project: Project) {
 export async function deleteProjectFromCloud(id: string) {
   if (!supabase) return;
   try {
-    await supabase.from('projects').delete().eq('id', id);
+    const currentUserId = getActiveUserId();
+    await supabase.from('projects').delete().eq('id', id).eq('user_id', currentUserId);
   } catch (err) {
     console.error('Error al eliminar proyecto en Supabase:', err);
   }
@@ -221,7 +244,8 @@ export async function saveGoalToCloud(goal: ProjectGoal) {
 export async function deleteGoalFromCloud(id: string) {
   if (!supabase) return;
   try {
-    await supabase.from('project_goals').delete().eq('id', id);
+    const currentUserId = getActiveUserId();
+    await supabase.from('project_goals').delete().eq('id', id).eq('user_id', currentUserId);
   } catch (err) {
     console.error('Error al eliminar meta en Supabase:', err);
   }
@@ -239,7 +263,8 @@ export async function saveRecurrenceRuleToCloud(rule: RecurrenceRule) {
 export async function deleteRecurrenceRuleFromCloud(id: string) {
   if (!supabase) return;
   try {
-    await supabase.from('recurrence_rules').delete().eq('id', id);
+    const currentUserId = getActiveUserId();
+    await supabase.from('recurrence_rules').delete().eq('id', id).eq('user_id', currentUserId);
   } catch (err) {
     console.error('Error al eliminar regla recurrente en Supabase:', err);
   }
@@ -257,18 +282,20 @@ export async function saveCompletionToCloud(completion: CompletionRecord) {
 export async function deleteCompletionFromCloud(recurrenceRuleId: string, date: string) {
   if (!supabase) return;
   try {
+    const currentUserId = getActiveUserId();
     await supabase
       .from('recurrence_completions')
       .delete()
       .eq('recurrence_rule_id', recurrenceRuleId)
-      .eq('date', date);
+      .eq('date', date)
+      .eq('user_id', currentUserId);
   } catch (err) {
     console.error('Error al eliminar completado en Supabase:', err);
   }
 }
 
 // ==============================================================================
-// Migración y Sincronización Inicial
+// Migración y Sincronización Inicial (Aislada por Usuario)
 // ==============================================================================
 
 export async function pushLocalDataToCloud() {
@@ -301,7 +328,9 @@ export async function syncAllFromCloud(): Promise<boolean> {
   if (!supabase) return false;
 
   try {
-    // 1. Obtener datos de Supabase
+    const currentUserId = getActiveUserId();
+
+    // 1. Obtener datos de Supabase filtrados exclusivamente para este usuario
     const [
       { data: dbProjects, error: errProjects },
       { data: dbGoals, error: errGoals },
@@ -309,11 +338,11 @@ export async function syncAllFromCloud(): Promise<boolean> {
       { data: dbRules, error: errRules },
       { data: dbCompletions, error: errCompletions },
     ] = await Promise.all([
-      supabase.from('projects').select('*'),
-      supabase.from('project_goals').select('*'),
-      supabase.from('tasks').select('*'),
-      supabase.from('recurrence_rules').select('*'),
-      supabase.from('recurrence_completions').select('*'),
+      supabase.from('projects').select('*').eq('user_id', currentUserId),
+      supabase.from('project_goals').select('*').eq('user_id', currentUserId),
+      supabase.from('tasks').select('*').eq('user_id', currentUserId),
+      supabase.from('recurrence_rules').select('*').eq('user_id', currentUserId),
+      supabase.from('recurrence_completions').select('*').eq('user_id', currentUserId),
     ]);
 
     if (errProjects || errGoals || errTasks || errRules || errCompletions) {
@@ -329,8 +358,7 @@ export async function syncAllFromCloud(): Promise<boolean> {
     const localTasks = useTaskStore.getState().tasks;
     const localProjects = useProjectStore.getState().projects;
 
-    // 2. Si la nube está completamente vacía pero tenemos datos locales en el portátil,
-    // subimos los datos locales automáticamente para no perder nada.
+    // 2. Si la nube está vacía para este usuario pero tenemos datos locales, subirlos
     if (!hasCloudData && (localTasks.length > 0 || localProjects.length > 0)) {
       console.log('Migrando datos locales de NIDUS hacia Supabase...');
       await pushLocalDataToCloud();
@@ -376,18 +404,25 @@ export async function syncAllFromCloud(): Promise<boolean> {
 }
 
 // ==============================================================================
-// Realtime: Suscripción a cambios en vivo (móvil <-> portátil)
+// Realtime: Suscripción a cambios en vivo con aislamiento por usuario
 // ==============================================================================
 
 export function initRealtimeSubscription() {
   if (!supabase) return () => {};
 
+  const currentUserId = getActiveUserId();
+
   const channel = supabase
-    .channel('nidus-realtime-sync')
+    .channel(`nidus-realtime-sync-${currentUserId}`)
     // Tareas
     .on(
       'postgres_changes',
-      { event: '*', schema: 'public', table: 'tasks' },
+      {
+        event: '*',
+        schema: 'public',
+        table: 'tasks',
+        filter: `user_id=eq.${currentUserId}`,
+      },
       (payload) => {
         const { eventType, new: newRow, old: oldRow } = payload;
         if (eventType === 'INSERT' || eventType === 'UPDATE') {
@@ -411,7 +446,12 @@ export function initRealtimeSubscription() {
     // Proyectos
     .on(
       'postgres_changes',
-      { event: '*', schema: 'public', table: 'projects' },
+      {
+        event: '*',
+        schema: 'public',
+        table: 'projects',
+        filter: `user_id=eq.${currentUserId}`,
+      },
       (payload) => {
         const { eventType, new: newRow, old: oldRow } = payload;
         if (eventType === 'INSERT' || eventType === 'UPDATE') {
@@ -435,7 +475,12 @@ export function initRealtimeSubscription() {
     // Metas de Proyectos
     .on(
       'postgres_changes',
-      { event: '*', schema: 'public', table: 'project_goals' },
+      {
+        event: '*',
+        schema: 'public',
+        table: 'project_goals',
+        filter: `user_id=eq.${currentUserId}`,
+      },
       (payload) => {
         const { eventType, new: newRow, old: oldRow } = payload;
         if (eventType === 'INSERT' || eventType === 'UPDATE') {
@@ -459,7 +504,12 @@ export function initRealtimeSubscription() {
     // Reglas recurrentes
     .on(
       'postgres_changes',
-      { event: '*', schema: 'public', table: 'recurrence_rules' },
+      {
+        event: '*',
+        schema: 'public',
+        table: 'recurrence_rules',
+        filter: `user_id=eq.${currentUserId}`,
+      },
       (payload) => {
         const { eventType, new: newRow, old: oldRow } = payload;
         if (eventType === 'INSERT' || eventType === 'UPDATE') {
@@ -483,7 +533,12 @@ export function initRealtimeSubscription() {
     // Completados
     .on(
       'postgres_changes',
-      { event: '*', schema: 'public', table: 'recurrence_completions' },
+      {
+        event: '*',
+        schema: 'public',
+        table: 'recurrence_completions',
+        filter: `user_id=eq.${currentUserId}`,
+      },
       (payload) => {
         const { eventType, new: newRow, old: oldRow } = payload;
         if (eventType === 'INSERT') {

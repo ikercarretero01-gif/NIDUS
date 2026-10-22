@@ -4,6 +4,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Project, ProjectGoal } from '@/types';
 import { generateId } from '@/lib/recurrence-engine';
+import { DEFAULT_USER_ID } from '@/lib/constants';
 import {
   saveProjectToCloud,
   deleteProjectFromCloud,
@@ -119,6 +120,7 @@ export const useProjectStore = create<ProjectState>()(
         const newProject: Project = {
           ...data,
           id: generateId(),
+          userId: DEFAULT_USER_ID,
           createdAt: now,
           updatedAt: now,
         };
@@ -163,6 +165,7 @@ export const useProjectStore = create<ProjectState>()(
         const newGoal: ProjectGoal = {
           ...data,
           id: generateId(),
+          userId: DEFAULT_USER_ID,
           createdAt: now,
           updatedAt: now,
         };

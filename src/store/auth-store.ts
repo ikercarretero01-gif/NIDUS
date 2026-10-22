@@ -1,43 +1,73 @@
 'use client';
 
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 
 interface AuthState {
   isAuthenticated: boolean;
-  pin: string;
-  unlock: (enteredPin: string) => boolean;
-  lock: () => void;
-  setPin: (newPin: string) => void;
+  isLoading: boolean;
+  errorMessage: string | null;
+  unlock: (enteredPin: string) => Promise<{ success: boolean; error?: string }>;
+  lock: () => Promise<void>;
+  checkSession: () => Promise<boolean>;
 }
 
-export const DEFAULT_PIN = process.env.NEXT_PUBLIC_OWNER_PIN || '9891';
+export const useAuthStore = create<AuthState>((set) => ({
+  isAuthenticated: false,
+  isLoading: true,
+  errorMessage: null,
 
-export const useAuthStore = create<AuthState>()(
-  persist(
-    (set, get) => ({
-      isAuthenticated: false,
-      pin: DEFAULT_PIN,
-
-      unlock: (enteredPin: string) => {
-        const correctPin = get().pin || DEFAULT_PIN;
-        if (enteredPin === correctPin) {
-          set({ isAuthenticated: true });
-          return true;
-        }
-        return false;
-      },
-
-      lock: () => {
-        set({ isAuthenticated: false });
-      },
-
-      setPin: (newPin: string) => {
-        set({ pin: newPin });
-      },
-    }),
-    {
-      name: 'nidus-auth',
+  checkSession: async () => {
+    try {
+      const res = await fetch('/api/auth/session', {
+        method: 'GET',
+        cache: 'no-store',
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const authenticated = Boolean(data.authenticated);
+        set({ isAuthenticated: authenticated, isLoading: false });
+        return authenticated;
+      }
+    } catch (err) {
+      console.error('Error al comprobar sesión en servidor:', err);
     }
-  )
-);
+    set({ isAuthenticated: false, isLoading: false });
+    return false;
+  },
+
+  unlock: async (enteredPin: string) => {
+    set({ errorMessage: null });
+    try {
+      const res = await fetch('/api/auth/unlock', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: enteredPin }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        set({ isAuthenticated: true, errorMessage: null });
+        return { success: true };
+      }
+
+      const errorMsg = data.error || 'PIN incorrecto';
+      set({ errorMessage: errorMsg });
+      return { success: false, error: errorMsg };
+    } catch (err) {
+      console.error('Error al validar PIN en servidor:', err);
+      const errorMsg = 'Error de conexión con el servidor';
+      set({ errorMessage: errorMsg });
+      return { success: false, error: errorMsg };
+    }
+  },
+
+  lock: async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch (err) {
+      console.error('Error al cerrar sesión:', err);
+    }
+    set({ isAuthenticated: false, errorMessage: null });
+  },
+}));
