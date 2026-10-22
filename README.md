@@ -26,7 +26,7 @@
 
 ## El Significado de Nidus
 
-Del latín ***nidus*** («nido», el lugar donde uno se asienta y cuida lo que está por crecer) y enraizado con el concepto clásico de ***agenda*** (del verbo latino *agere*, «las cosas que se han de hacer»).
+Del latín ***nidus*** («nido», el lugar donde uno se asienta y cuida lo que está por crecer).
 
 Nidus está concebido como un refugio de trabajo: un espacio seguro y minimalista donde incubar tus proyectos personales, ordenar tus hábitos diarios y avanzar con foco, lejos de la dispersión y el ruido de las herramientas convencionales.
 
