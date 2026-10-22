@@ -245,8 +245,8 @@ export default function SettingsPage() {
                       {isConfigured
                         ? lastSyncedAt
                           ? `Última sincronización: ${lastSyncedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`
-                          : 'Listo para sincronizar móvil y portátil'
-                        : 'Configura las claves de Supabase para sincronizar con tu móvil.'}
+                          : 'Listo para sincronizar tus dispositivos en tiempo real'
+                        : 'Configura Supabase en .env.local para sincronización en tiempo real.'}
                     </p>
                   </div>
                 </div>

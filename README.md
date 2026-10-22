@@ -177,6 +177,12 @@ La aplicación se abrirá en [http://localhost:3000](http://localhost:3000).
 
 ---
 
+## Documentación Técnica
+
+Para un desglose en profundidad sobre las decisiones de ingeniería, el motor de proyección de tareas virtuales y el modelo criptográfico de seguridad, consulta [ARCHITECTURE.md](./ARCHITECTURE.md).
+
+---
+
 ## Licencia
 
 Distribuido bajo la Licencia MIT. Consulta el archivo [LICENSE](./LICENSE) para más detalles.

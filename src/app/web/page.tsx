@@ -329,9 +329,9 @@ export default function WebLandingPage() {
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20">
               <ShieldCheck className="h-5 w-5" />
             </div>
-            <h3 className="text-sm font-semibold text-white">Local-First y Privacidad Absoluta</h3>
+            <h3 className="text-sm font-semibold text-white">Local-First con Nube Opcional</h3>
             <p className="text-xs text-zinc-400 leading-relaxed">
-              Tus tareas e información personal residen exclusivamente en tu navegador. Sin bases de datos de terceros, sin telemetría intrusiva y sin costes de suscripción.
+              Tus tareas residen en tu dispositivo de forma nativa e instantánea. Si deseas sincronización multidispositivo, conecta tu propio Supabase bajo políticas Row Level Security (RLS) estrictas.
             </p>
           </div>
         </div>
@@ -370,7 +370,7 @@ export default function WebLandingPage() {
                   <td className="p-3.5 sm:p-4 font-medium text-white">Coste económico</td>
                   <td className="p-3.5 sm:p-4 text-zinc-400">Gratis / Planes Pro</td>
                   <td className="p-3.5 sm:p-4 text-zinc-400">5€ a 50€ (pago o suscripción)</td>
-                  <td className="p-3.5 sm:p-4 text-emerald-400 font-semibold">100% Gratis y Clonable</td>
+                  <td className="p-3.5 sm:p-4 text-emerald-400 font-semibold">100% Open Source (MIT)</td>
                 </tr>
                 <tr>
                   <td className="p-3.5 sm:p-4 font-medium text-white">Rutinas por días (Gym L-X-V)</td>
@@ -379,10 +379,10 @@ export default function WebLandingPage() {
                   <td className="p-3.5 sm:p-4 text-amber-300 font-semibold">Presets automáticos de 1 clic</td>
                 </tr>
                 <tr>
-                  <td className="p-3.5 sm:p-4 font-medium text-white">Privacidad de datos</td>
-                  <td className="p-3.5 sm:p-4 text-zinc-400">Servidores en la nube</td>
-                  <td className="p-3.5 sm:p-4 text-zinc-400">Servidores en la nube</td>
-                  <td className="p-3.5 sm:p-4 text-emerald-400 font-semibold">Local-First (tu navegador)</td>
+                  <td className="p-3.5 sm:p-4 font-medium text-white">Privacidad y control</td>
+                  <td className="p-3.5 sm:p-4 text-zinc-400">Nube propietaria cerrada</td>
+                  <td className="p-3.5 sm:p-4 text-zinc-400">Nube propietaria cerrada</td>
+                  <td className="p-3.5 sm:p-4 text-emerald-400 font-semibold">Local-First + Nube privada (RLS)</td>
                 </tr>
                 <tr>
                   <td className="p-3.5 sm:p-4 font-medium text-white">Velocidad de carga</td>
@@ -410,16 +410,16 @@ export default function WebLandingPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
           {[
-            { name: 'Next.js 15', role: 'App Router & SSR' },
+            { name: 'Next.js 15', role: 'App Router & API Routes' },
             { name: 'React 19', role: 'Concurrencia y Hooks' },
             { name: 'TypeScript 5', role: 'Tipado estricto' },
             { name: 'Tailwind CSS 3.4', role: 'Tokens de diseño' },
             { name: 'Zustand 5', role: 'Estado y persistencia' },
+            { name: 'Supabase', role: 'PostgreSQL + RLS Realtime' },
+            { name: 'HMAC Security', role: 'Sesiones con cookies HttpOnly' },
             { name: 'date-fns 4', role: 'Cálculo de recurrencias' },
-            { name: 'Radix UI', role: 'Accesibilidad WAI-ARIA' },
-            { name: 'Lucide Icons', role: 'Iconografía vector' },
           ].map((item) => (
             <div
               key={item.name}
