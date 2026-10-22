@@ -7,9 +7,8 @@ Documento de referencia para comprender el propósito, diseño de producto y la 
 # PARTE 1: Nivel Básico (Visión General y Producto)
 
 ### 1. ¿Qué es Nidus?
-**Nidus** es una aplicación web y PWA (*Progressive Web App*) de gestión personal del tiempo. Nace de dos vocablos latinos:
+**Nidus** es una aplicación web y PWA (*Progressive Web App*) de gestión personal del tiempo:
 - ***Nidus*** («nido»): el refugio donde se incuba y protege lo que está por crecer (tus proyectos y aspiraciones personales).
-- ***Agenda*** (del verbo *agere*, «las cosas que se han de hacer»): la lista consciente de compromisos inmediatos.
 
 ### 2. El problema que resuelve
 La inmensa mayoría de herramientas de productividad sufren de dos grandes defectos:
